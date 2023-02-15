@@ -1,9 +1,15 @@
 
+'use client'
+
 import {createContext, useContext, useEffect, useState} from 'react'
 import { auth } from '@/lib/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 
 const AuthContext = createContext({})
+
+export function useAuth() {
+  return useContext(AuthContext)
+}
 
 
 export function AuthContextProvider({children}:{children: React.ReactNode}) {
@@ -32,6 +38,3 @@ export function AuthContextProvider({children}:{children: React.ReactNode}) {
   )
 }
 
-export function useAuth() {
-  return useContext(AuthContext)
-}

@@ -10,6 +10,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import { useRouter } from 'next/navigation';
 
+import { auth } from "@/lib/firebase"
+import { signOut } from "firebase/auth"
+
 // const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
 
 
@@ -24,6 +27,7 @@ export default function NavBar() {
     const router = useRouter()
 
     function logout(){
+        signOut(auth)
         router.push('/')
     }
 
@@ -61,16 +65,17 @@ export default function NavBar() {
 
             </div>
             <div className="m-4 items-center ml-auto">
-                <button className="rounded-full p-0.5 border-2" onClick={() => {setProfileDropdown(!profileDropdown)}}>
+            <button onClick={logout}>logout</button>
+                {/* <button className="rounded-full p-0.5 border-2" onClick={() => {setProfileDropdown(!profileDropdown)}}>
                 <Image className="rounded-full h-10 w-10" src='https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3687&q=80' alt='profile' width={10} height={10}/>
                 </button>
                 {profileDropdown && 
                 <div className={`rounded-lg flex flex-col p-4 m-2 border absolute right-0`}>
                     <span className="font-bold">Fifi Hayford</span>
                     <hr className="my-2"/>
-                    <Link href='/'>logout</Link>
+                    <button onClick={logout}>logout</button>
                 </div>
-                }
+                } */}
             </div>
         </nav>
     )

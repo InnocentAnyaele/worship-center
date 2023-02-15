@@ -5,8 +5,10 @@ import Image from "next/image";
 import { useState } from "react";
 import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+// import { useContext } from "react";
 
 import { useAuth } from "@/lib/AuthContext";
+import { useRouter } from "next/navigation";
 
 const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
 
@@ -14,23 +16,30 @@ export default function Login() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  const router = useRouter()
   
-  // const {user} = useAuth()
-  // console.log(user)
+  const {user} = useAuth()
+  console.log('logging context', user)
 
-
-  function submitHandler(e:any) {
-    e.preventDefault()
-    console.log(email)
-    console.log(password)
+  function signIn() {
     signInWithEmailAndPassword(auth, email, password)
     .then((response) => {
-      console.log(response)
+      router.push('/main/dashboard')
     })
     .catch((err) => {
       console.log(err)
     })
   }
+
+  function submitHandler(e:any) {
+    e.preventDefault()
+    console.log(email)
+    console.log(password)
+    signIn()
+  }
+
+
 
 
   return (
