@@ -4,12 +4,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons'
 import AddMember from '@/components/addMember/AddMember'
 import { Dialog, Transition } from '@headlessui/react'
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useEffect } from 'react'
 import ViewMember from '@/components/viewMember/ViewMember'
 // import { viewDataInterface } from '@/lib/interfaces'
 
+import {getDocs, collection, query, orderBy, where, deleteDoc, doc} from 'firebase/firestore'
+import { db } from "@/lib/firebase"
+
 
 export interface viewDataInterface {
+    'id': string,
     'welfare' : string;
     'lastName' : string;
     'otherNames' : string;
@@ -46,31 +50,31 @@ import { Montserrat } from "@next/font/google"
 
 const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
 
-
 export default function Members () {
 
     const emptyMemberData= {
+        'id': '',
         'welfare' : '',
         'lastName' : '',
         'otherNames' : '',
         'address' : '',
-        'sex' : '',
-        'dateOfBirth' : '2000-07-22',
+        'sex' : 'Male',
+        'dateOfBirth' : '',
         'nationality' : '',
         'occupation' : '',
         'phone' : '',
         'hometown' : '',
         'region' : '',
         'residence' : '',
-        'maritalStatus': '',
-        'department' : '',
+        'maritalStatus': 'Single',
+        'department' : 'Men Ministry',
         'spouseName' : '',
         'fatherName' : '',
         'motherName' : '',
         'childrenName' : '',
         'nextOfKin' : '',
         'nextOfKinPhone': '',
-        'declaration' : '',
+        'declaration' : 'Unsigned',
         'dateOfFirstVisit': '',
         'dateOfBaptism': '',
         'membership' : '',
@@ -78,13 +82,62 @@ export default function Members () {
         'officerInCharge': '',
         'officerSignatureDate': '',
         'headPastorSignatureDate': '',
-        'status' : '',
+        'status' : 'Active',
     }
 
     let [isAddMemberOpen, setIsAddMemberOpen] = useState(false)
     let [isViewMemberOpen, setIsViewMemberOpen] = useState(false)
     let [viewMemberData, setViewMemberData] = useState<viewDataInterface>(emptyMemberData)
 
+    const [memberData, setMemberData] = useState<any>(null)
+    const [search, setSearch] = useState('')
+
+
+    useEffect(() => {
+      const fetchMemberData = async () => {
+        const memberRef = collection(db, "members")
+        const memberRefQuery = query(memberRef, orderBy('dateAdded', 'asc'))
+        const snapshots = await getDocs(memberRefQuery)
+        .then((snapshots) => {
+          const docs = snapshots.docs.map((doc) =>{
+            const data = doc.data()
+            data.id = doc.id
+            return data
+          } )
+          console.log(docs)
+          setMemberData(docs)
+        })
+      
+      }
+      fetchMemberData()
+    },[])
+
+    async function searchHandler(){
+      if (search) {
+        const memberRef = collection(db, "members")
+        const memberRefQuery = query(memberRef, where('lastName', '==' , search))
+        const snapshots = await getDocs(memberRefQuery)
+
+        const docs = snapshots.docs.map((doc) =>{
+          const data = doc.data()
+          data.id = doc.id
+          return data
+        } )
+        console.log(docs)
+        setMemberData(docs)
+      }
+    }
+
+    async function deleteHandler(){
+      // const memberRef = collection(db, "members")
+      const docRef = doc(db, "members", viewMemberData.id)
+      const deleteQuery = await deleteDoc(docRef)
+      .then(() => {
+        console.log('deleted')
+        window.location.reload()
+      })
+      .catch((err) => console.log(err))
+    }
 
   function closeAddMemberModal() {
     setIsAddMemberOpen(false)
@@ -192,7 +245,7 @@ export default function Members () {
                         <span>View Member</span>
                         <div>
                             <FontAwesomeIcon icon={faEdit} color='blue' className='mr-5' onClick={editHandler}/>
-                            <FontAwesomeIcon icon={faTrash} color='red'/>
+                            <FontAwesomeIcon icon={faTrash} color='red' onClick={deleteHandler}/>
                         </div>
                     </div>
                   </Dialog.Title>
@@ -207,8 +260,8 @@ export default function Members () {
        
             <div className='flex flex-row justify-between flex-wrap'> 
             <div className="rounded border-2 h-10">
-                <FontAwesomeIcon className='px-2' icon={faSearch}/>
-                <input className='h-full p-2' placeholder='Search' name='search' type='text'/>
+                <FontAwesomeIcon className='px-2' icon={faSearch} onClick={searchHandler}/>
+                <input className='h-full p-2' placeholder='search by last name' name='search' value={search} onChange={e => setSearch(e.target.value)} type='text'/>
             </div>
                 {/* <input className="p-2 rounded border-2 h-10" placeholder="Search" type='text'/> */}
                 <button className="bg-[#1A96FC] px-2 h-10 rounded w-40" onClick={() => openAddMemberModal()}><span className="text-white text-sm">Add Member</span></button>
@@ -216,7 +269,8 @@ export default function Members () {
             <table className='mt-10 table-auto border-separate border-spacing-[20px] text-[15px] w-[100%] flex-wrap text-sm'>
                 <thead className='text-[#B2B2B2]'>
                 <tr className='text-left'>
-                    <th>Name</th>
+                    <th>Last Name</th>
+                    <th>Other Names</th>
                     <th>Department</th>
                     <th>Sex</th>
                     <th>Date of Birth</th>
@@ -225,56 +279,64 @@ export default function Members () {
                     <th>Status</th>
                 </tr>
                 </thead>
-                <tbody> 
-                    <tr onClick={() => openViewMemberModal({
-                          'welfare' : 'CWCWN001',
-                          'lastName' : 'Hayford',
-                          'otherNames' : 'Innocent',
-                          'address' : 'Ashaiman',
-                          'sex' : 'Male',
-                          'dateOfBirth' : '2006-06-26',
-                          'nationality' : 'Ghanaian',
-                          'occupation' : 'Cyber Security Analyst',
-                          'phone' : '233557187667',
-                          'hometown' : 'Kumasi',
-                          'region' : 'Eastern Region',
-                          'residence' : 'Ashaiman',
-                          'maritalStatus': 'Married',
-                          'department' : 'Instrumentalist',
-                          'spouseName' : '',
-                          'fatherName' : '',
-                          'motherName' : '',
-                          'childrenName' : '',
-                          'nextOfKin' : '',
-                          'nextOfKinPhone': '',
-                          'declaration' : 'signed',
-                          'dateOfFirstVisit': '2006-06-26',
-                          'dateOfBaptism': '2006-06-26',
-                          'membership' : '',
-                          'dateOfTransfer' : '2006-06-26',
-                          'officerInCharge': 'Deacon Mat',
-                          'officerSignatureDate': '2006-06-26',
-                          'headPastorSignatureDate': '2006-06-26',
-                          'status' : 'active',
-                    })}> 
-                        <td>Fifi Hayford</td>
-                        <td>Instrumentalist</td>
-                        <td>Male</td>
-                        <td>21/06/2006</td>
-                        <td>21/06/2006</td>
-                        <td>233557187667</td>
-                        <td className='text-red-600 font-bold'>Inactive</td>
-                    </tr>
-                    <tr> 
-                        <td>Theresah Mills</td>
-                        <td>Choirister</td>
-                        <td>Female</td>
-                        <td>21/06/2006</td>
-                        <td>21/06/2006</td>
-                        <td>233557187667</td>
-                        <td className='text-green-600 font-bold'>Active</td>
-                    </tr>
-                </tbody>
+                {
+                  memberData ? 
+
+                  <tbody> 
+                  {
+
+                    memberData.map(data => (
+                      <tr key={data.id}  onClick={() => openViewMemberModal({
+                        'id' : data.id,
+                        'welfare' : data.welfare,
+                        'lastName' : data.lastName,
+                        'otherNames' : data.otherNames,
+                        'address' : data.address,
+                        'sex' : data.sex,
+                        'dateOfBirth' : data.dateOfBirth,
+                        'nationality' : data.nationality,
+                        'occupation' : data.occupation,
+                        'phone' : data.phone,
+                        'hometown' : data.dateOfBirth,
+                        'region' : data.region,
+                        'residence' : data.residence,
+                        'maritalStatus': data.maritalStatus,
+                        'department' : data.department,
+                        'spouseName' : data.spouseName,
+                        'fatherName' : data.fatherName,
+                        'motherName' : data.motherName,
+                        'childrenName' : data.childrenName,
+                        'nextOfKin' : data.nextOfKin,
+                        'nextOfKinPhone': data.nextOfKinPhone,
+                        'declaration' : data.declaration,
+                        'dateOfFirstVisit': data.dateOfFirstVisit,
+                        'dateOfBaptism': data.dateOfBaptism,
+                        'membership' : data.membership,
+                        'dateOfTransfer' : data.dateOfTransfer,
+                        'officerInCharge': data.officerInCharge,
+                        'officerSignatureDate': data.officerSignatureDate,
+                        'headPastorSignatureDate': data.headPastorSignatureDate,
+                        'status' : data.status,
+                  })}>
+                      <td>{data.lastName}</td>
+                      <td>{data.otherNames }</td>
+                      <td>{data.department}</td>
+                      <td>{data.sex}</td>
+                      <td>{data.dateOfBirth}</td>
+                      <td>{data.dataOfFirstVisit}</td>
+                      <td>{data.phone}</td>
+                      <td className={`${data.status == 'Active' ?'text-green-600' : 'text-red-600' } font-bold`}>{data.status}</td>
+                      </tr>
+                    ))
+                  }
+              </tbody>
+                : 
+<div className='mt-5 text-[#B2B2B2]'>
+<span>Loading member data...</span>       
+</div>
+            }
+
+      
             </table>
         </div>
     )
