@@ -2,11 +2,13 @@
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTrash } from "@fortawesome/free-solid-svg-icons"
-import { Fragment, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { Dialog, Transition } from "@headlessui/react"
 import AddOffering from "@/components/addOffering/AddOffering"
 
 import { Montserrat } from "@next/font/google"
+import { collection, deleteDoc, doc, getDocs, orderBy, query } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 
 const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
 
@@ -21,6 +23,44 @@ export default function Offering() {
 
     function openModal() {
         setIsOpen(true)   
+    }
+
+    const [offeringData, setOfferingData] = useState<any>(null)
+
+    const [deleteError, setDeleteError] = useState('')
+    
+
+    useEffect(() => {
+        const fetchOfferingData = async () => {
+            const offeringRef = collection(db, "offering")
+            const offeringRefQuery = query(offeringRef, orderBy('dateAdded', 'desc'))
+            const snapshots = await getDocs(offeringRefQuery)
+            .then((snapshots) => {
+              const docs = snapshots.docs.map((doc) =>{
+                const data = doc.data()
+                data.id = doc.id
+                return data
+              })
+              console.log(docs)
+                setOfferingData(docs)
+              console.log('offering data', offeringData)
+            })
+        }
+        fetchOfferingData()
+      },[])
+
+    function deleteHandler(id:string) {
+        const docRef = doc(db, "offering", id)
+        deleteDoc(docRef)
+        .then(() => {
+            console.log('deleted')
+            // setDeleteError('')
+            window.location.reload()
+          })
+          .catch((err) => {
+            console.log(err)
+            setDeleteError('Could not delete')
+          })
     }
 
     return (
@@ -69,6 +109,13 @@ export default function Offering() {
 
       
             <button className="text-white p-2 h-10 rounded w-40 bg-[#1A96FC]" onClick={() => setIsOpen(true)}>Add Offering</button>
+            {
+                      deleteError && 
+                      
+                      <div className={`text-center text-sm font-regular text-white bg-red-400 border p-1 rounded my-5`}>
+                      <span>Could not delete</span>
+                      </div>  
+                    }
             <table className='mt-10 table-auto border-separate border-spacing-[20px] text-[15px] w-[100%] flex-wrap text-sm'>
                 <thead className='text-[#B2B2B2]'>
                 <tr className='text-left'>
@@ -78,89 +125,31 @@ export default function Offering() {
                     <th></th>
                 </tr>
                 </thead>
+                {
+                    offeringData ? 
                 <tbody> 
-                    <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr>
+                    
+                   {
+                    offeringData.map(data => (
+                        <tr key={data.id}>
+                            <td>{data.date}</td>
+                            <td>{data.amount}</td>
+                            <td>{data.members}</td>
+                            <td><FontAwesomeIcon icon={faTrash} color='red' onClick={() => deleteHandler(data.id)} /></td>
+                        </tr>
+                    ))
+                   }
+
                 </tbody>
+
+                : 
+
+                <div className='mt-5 text-[#B2B2B2]'>
+                <span>Loading offering data...</span>       
+                </div>
+
+                }
+             
             </table>
         </div>
     )

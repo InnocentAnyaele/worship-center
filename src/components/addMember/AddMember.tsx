@@ -1,5 +1,5 @@
 import { useState } from "react"
-import {collection, addDoc} from 'firebase/firestore'
+import {collection, addDoc, doc, setDoc} from 'firebase/firestore'
 import { db } from "@/lib/firebase"
 
 export default function AddMember (props:any) {
@@ -17,7 +17,7 @@ export default function AddMember (props:any) {
 
 
     const [welfare, setWelfare] = useState(props.data.welfare)
-    const [lastName, setLastName] = useState(props.data.name)
+    const [lastName, setLastName] = useState(props.data.lastName)
     const [otherNames, setOtherNames] = useState(props.data.otherNames)
     const [address, setAddress] = useState(props.data.address)
     const [sex, setSex] = useState(props.data.sex)
@@ -111,6 +111,30 @@ export default function AddMember (props:any) {
                 setSuccess('')
                 setError('Something went wrong')
             }
+        }
+
+        if (edit){
+            const docRef = doc(db, "members", props.data.id)
+            try {
+                setDoc(docRef, data)
+                .then((docRef) => {
+                    console.log('Document has been updated')
+                    setError('')
+                    setSuccess('Updated successful')
+                    window.location.reload()
+                })
+                .catch((err) => {
+                    console.log(err)
+                    setSuccess('')
+                    setError('Something went wrong')
+                })
+            }
+            catch (e) {
+                console.log(e)
+                setSuccess('')
+                setError('Something went wrong')
+            }
+          
         }
        
       
@@ -311,7 +335,7 @@ export default function AddMember (props:any) {
                     : null
                 }
                
-                <button className="p-2 rounded bg-[#1A96FC] text-white" type='submit'>Add Member</button>
+                <button className="p-2 rounded bg-[#1A96FC] text-white" type='submit'>Save</button>
 
             </form>
         // </div>

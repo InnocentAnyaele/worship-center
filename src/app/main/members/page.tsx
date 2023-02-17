@@ -92,11 +92,13 @@ export default function Members () {
     const [memberData, setMemberData] = useState<any>(null)
     const [search, setSearch] = useState('')
 
+    const [deleteError, setDeleteError] = useState('')
+
 
     useEffect(() => {
       const fetchMemberData = async () => {
         const memberRef = collection(db, "members")
-        const memberRefQuery = query(memberRef, orderBy('dateAdded', 'asc'))
+        const memberRefQuery = query(memberRef, orderBy('dateAdded', 'desc'))
         const snapshots = await getDocs(memberRefQuery)
         .then((snapshots) => {
           const docs = snapshots.docs.map((doc) =>{
@@ -128,15 +130,17 @@ export default function Members () {
       }
     }
 
-    async function deleteHandler(){
-      // const memberRef = collection(db, "members")
+     function deleteHandler(){
       const docRef = doc(db, "members", viewMemberData.id)
-      const deleteQuery = await deleteDoc(docRef)
+      deleteDoc(docRef)
       .then(() => {
         console.log('deleted')
         window.location.reload()
       })
-      .catch((err) => console.log(err))
+      .catch((err) => {
+        console.log(err)
+        setDeleteError('Could not delete')
+      })
     }
 
   function closeAddMemberModal() {
@@ -248,6 +252,14 @@ export default function Members () {
                             <FontAwesomeIcon icon={faTrash} color='red' onClick={deleteHandler}/>
                         </div>
                     </div>
+                    {
+                      deleteError && 
+                      
+                      <div className={`text-center text-sm font-regular text-white bg-red-400 border p-1 rounded my-5`}>
+                      <span>{deleteError}</span>
+                      </div>  
+                    }
+        
                   </Dialog.Title>
                     <ViewMember data = {viewMemberData}/>
                 </Dialog.Panel>

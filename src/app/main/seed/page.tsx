@@ -2,9 +2,12 @@
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTrash } from "@fortawesome/free-solid-svg-icons"
-import { Fragment, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { Dialog, Transition } from "@headlessui/react"
 import AddSeed from "@/components/addSeed/AddSeed"
+
+import { collection, deleteDoc, doc, getDocs, orderBy, query } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 
 import { Montserrat } from "@next/font/google"
 
@@ -22,6 +25,43 @@ export default function Seed() {
     function openModal() {
         setIsOpen(true)   
     }
+
+    const [seedData, setSeedData] = useState<any>(null)
+    const [deleteError, setDeleteError] = useState('')
+
+    useEffect(() => {
+      const fetchOfferingData = async () => {
+          const seedRef = collection(db, "seed")
+          const seedRefQuery = query(seedRef, orderBy('dateAdded', 'desc'))
+          const snapshots = await getDocs(seedRefQuery)
+          .then((snapshots) => {
+            const docs = snapshots.docs.map((doc) =>{
+              const data = doc.data()
+              data.id = doc.id
+              return data
+            })
+            console.log(docs)
+              setSeedData(docs)
+            console.log('offering data', seedData)
+          })
+      }
+      fetchOfferingData()
+    },[])
+
+  function deleteHandler(id:string) {
+      const docRef = doc(db, "seed", id)
+      deleteDoc(docRef)
+      .then(() => {
+          console.log('deleted')
+          // setDeleteError('')
+          window.location.reload()
+        })
+        .catch((err) => {
+          console.log(err)
+          setDeleteError('Could not delete')
+        })
+  }
+
 
     return (
         <div className="flex flex-col justify-center py-10 px-40 flex-wrap w-[100%]">
@@ -78,69 +118,29 @@ export default function Seed() {
                     <th></th>
                 </tr>
                 </thead>
-                <tbody> 
-                    <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> <tr> 
-                        <td>7/01/2022</td>
-                        <td>850</td>
-                        <td>200</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr> 
-                </tbody>
+                {
+                  seedData ? 
+
+                  <tbody> 
+
+                    {
+                      seedData.map(data => (
+                        <tr key={data.id}>
+                          <td>{data.date}</td>
+                          <td>{data.amount}</td>
+                          <td>{data.members}</td>
+                          <td><FontAwesomeIcon icon={faTrash} color='red' onClick={() => deleteHandler(data.id)} /></td>
+                        </tr>
+                      ))
+
+                    }
+
+
+              </tbody>
+
+: null
+                }
+      
             </table>
         </div>
     )
