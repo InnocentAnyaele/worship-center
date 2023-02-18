@@ -43,6 +43,7 @@ export default function Dashboard(){
       const [departmentCount, setDepartmentCount] = useState<any>(null)
       const [offeringCount, setOfferingCount] = useState<any>(null)
       const [offeringDate, setOfferingDate] = useState<any>(null)
+      const [titheCount, setTitheCount] = useState<any>(null)
       let growthYear = 2023
       
     const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -114,20 +115,30 @@ export default function Dashboard(){
 
 
     async function getOffering() {
+        let offeringSum:number = 0
         const offeringRef = collection(db, 'offering')
         const offeringRefQuery = query(offeringRef, orderBy('date', 'desc'))
         const count = 0
         const snapshots = await getDocs(offeringRefQuery)
         .then((snapshots) => {
             // setMemberCount(snapshots.docs.length)
-            const todaysDate = new Date()
             const offeringDocs = snapshots.docs.map((doc) => {
                 const data = doc.data()
+                let offeringDate = new Date(data.date)
+                let offeringYear = offeringDate.getFullYear()
+                console.log('offering date', offeringDate)
+                console.log('offering year', offeringYear)
+
+                if (offeringYear == currYear) {
+                    offeringSum = offeringSum + data.amount
+                }
                 return data          
             })
+            console.log(offeringSum)
+            setOfferingCount(offeringSum)
         console.log(offeringDocs)
-        setOfferingCount(offeringDocs[0].amount)
-        setOfferingDate(offeringDocs[0].date)
+        // setOfferingCount(offeringDocs[0].amount)
+        // setOfferingDate(offeringDocs[0].date)
         console.log(offeringCount)
         console.log(offeringDate)
         })
@@ -156,10 +167,39 @@ export default function Dashboard(){
         })
     }
 
+    async function getTithe(){
+        let titheSum:number = 0
+        const titheRef = collection(db, 'tithe')
+        const titheRefQuery = query(titheRef, orderBy('dateAdded', 'desc'))
+        const snapshots = await getDocs(titheRefQuery)
+        .then((snapshots) => {
+            const docs = snapshots.docs.map((doc) =>{
+              const data = doc.data()
+              data.id = doc.id
+
+              let titheDate = new Date(data.date)
+                let titheYear = titheDate.getFullYear()
+                console.log('tithe year', titheYear)
+                
+              if (titheYear == currYear) {
+                titheSum = titheSum + data.amount
+              }
+            })
+
+          console.log('tithe sum', titheSum)
+          setTitheCount(titheSum)
+          })
+    }
+
 
     
-    const row1content = [{'title': 'total members', 'figure' : '228'},{'title': 'offetory 2/9/2023', 'figure' : 'GHS 6066'},{'title': `project ${currYear}`, 'figure' : 'GHS 6066'}, {'title': 'tithe', 'figure' : 'GHS 6066'}]
-    const col1content = [{'title': 'Clergy', 'figure' : '60'},{'title': 'Choristers', 'figure' : '120'},{'title': 'Ushers', 'figure' : '80'}, {'title': 'Chidlren ministry', 'figure' : '40'}]
+    const row1content = [{'title': 'total members', 'figure' :memberCount ?  memberCount : 'loading'},{'title': `offetory ${currYear}`, 'figure' : offeringCount ? `GHS ${offeringCount}` : 'loading'},{'title': `project ${currYear}`, 'figure' : offeringCount ? `GHS ${offeringCount}` : 'loading'}, {'title': 'tithe', 'figure' : titheCount ? `GHS ${titheCount}` : 'loading'}]
+    const col1content = [{'title': 'Men Ministry', 'figure' : departmentCount ?  departmentCount['Men Ministry'] : 'loading'},{'title': 'Women Ministry', 'figure' : departmentCount ? departmentCount['Women Ministry'] : 'loading'},{'title': 'Youth Ministry', 'figure' : departmentCount ? departmentCount['Women Ministry'] : 'loading'}, {'title': 'Chidlren ministry', 'figure' : departmentCount ? departmentCount['Children Ministry'] : 'loading'}]
+
+
+      
+    // const row1content = [{'title': 'total members', 'figure' : 12},{'title': `offetory ${currYear}`, 'figure' : 12},{'title': `project ${currYear}`, 'figure' : 12}, {'title': 'tithe', 'figure' : 12}]
+    // const col1content = [{'title': 'Men Ministry', 'figure' : departmentCount ? departmentCount['Men Ministry'] : 'loading'},{'title': 'Women Ministry', 'figure' : 12},{'title': 'Youth Ministry', 'figure' : 12}, {'title': 'Chidlren ministry', 'figure' : 12}]
 
     getOffering()
 
@@ -168,6 +208,7 @@ export default function Dashboard(){
         getMembers()
         getOffering()
         getcontribution()
+        getTithe()
     },[])
 
 
