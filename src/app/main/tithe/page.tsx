@@ -34,12 +34,6 @@ export default function Tithe() {
     const [search, setSearch] = useState('')
 
 
-    let test:any = {
-      'innocent' : 4
-    }
-
-    console.log('test', test)
-
     // const getTitheSum = async (id) => {
     //   const titheRef = collection(db, "tithe")
     //   const titheRefQuery = query(titheRef, orderBy('dateAdded', 'desc'))

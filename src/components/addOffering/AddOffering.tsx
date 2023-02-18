@@ -51,7 +51,7 @@ export default function AddOffering() {
             {
                     error && 
                     <div className={`text-center text-white bg-red-400 border p-2 rounded mb-2`}>
-                    <span>{error && error}</span>
+                    <span>{error}</span>
                 </div>
                 }
             <button className="text-white m-1 p-2 h-10 rounded w-40 bg-[#1A96FC]" type='submit'>Add Offering</button>
