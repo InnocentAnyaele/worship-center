@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
-import {collection, addDoc, doc, setDoc, orderBy, query, getDocs} from 'firebase/firestore'
+import {collection, addDoc, doc, setDoc, orderBy, query, getDocs, increment} from 'firebase/firestore'
 import { db } from "@/lib/firebase"
 
 export default function AddTithe() {
 
     const [date, setDate] = useState('')
     const [amount, setAmount] = useState('')
-    const [member, setMember] = useState('')
+    const [member, setMember] = useState('None')
     const [error, setError] = useState('')
 
     const [memberDropdown, setMemberDropdown] = useState<any>(null)
@@ -40,12 +40,15 @@ export default function AddTithe() {
             'dateAdded' : new Date()
         }
 
+        console.log(data)
+
         const dbRef = collection(db, "tithe")
         try {
             addDoc(dbRef, data)
             .then((res) => {
                 console.log(res)
                 window.location.reload()
+
             })
             .catch((err) => {
                 console.log(err)
@@ -56,6 +59,8 @@ export default function AddTithe() {
             console.log(e)
             setError('Something went wrong')
         }
+
+
     }
 
     return (
@@ -66,9 +71,10 @@ export default function AddTithe() {
                 memberDropdown ? 
             <>
             <label className="m-1">Date</label>
-            <input className="border w-40 p-2 m-1 rounded" type='date' name='date' value={date}/>
+            <input className="border w-40 p-2 m-1 rounded" type='date' name='date' value={date} onChange={e => setDate(e.target.value)} />
             <label className="m-1">Select Member</label>
-            <select className="border p-2 rounded" name="members" value={member} onChange={e => setMember(e.target.value)} required>
+            <select className="border p-2 rounded" name="member" value={member} onChange={e => setMember(e.target.value)} required>
+                <option value='None'>None</option>
                 {
                     memberDropdown.map(item => (
                         <option key={item.id} value={item.lastName + ' ' + item.otherNames}>{item.lastName + ' ' + item.otherNames}</option>

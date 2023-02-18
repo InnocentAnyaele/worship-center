@@ -2,11 +2,15 @@
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSearch, faTrash } from "@fortawesome/free-solid-svg-icons"
-import { Fragment, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { Dialog, Transition } from "@headlessui/react"
 import AddTithe from "@/components/addTithe/AddTithe"
 
 import { Montserrat } from "@next/font/google"
+
+
+import { collection, deleteDoc, doc, getDocs, orderBy, query, where } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 
 const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
 
@@ -21,6 +25,101 @@ export default function Tithe() {
 
     function openModal() {
         setIsOpen(true)   
+    }
+
+    const [titheData, setTitheData] = useState<any>(null)
+
+    const [deleteError, setDeleteError] = useState('')
+
+    const [search, setSearch] = useState('')
+
+
+    let test:any = {
+      'innocent' : 4
+    }
+
+    console.log('test', test)
+
+    // const getTitheSum = async (id) => {
+    //   const titheRef = collection(db, "tithe")
+    //   const titheRefQuery = query(titheRef, orderBy('dateAdded', 'desc'))
+    // }
+
+
+  useEffect(() => {
+        const fetchTitheData = async () => {
+            let titheSum:any = {}
+            const titheRef = collection(db, "tithe")
+            const titheRefQuery = query(titheRef, orderBy('dateAdded', 'desc'))
+            const snapshots = await getDocs(titheRefQuery)
+            .then((snapshots) => {
+              const docs = snapshots.docs.map((doc) =>{
+                const data = doc.data()
+                data.id = doc.id
+
+                if (data.date in titheSum) {
+                  titheSum[data.date] = titheSum[data.date] + data.amount
+                }
+                else {
+                  titheSum[data.date] = data.amount
+                }
+                return data
+              })
+              docs.map(item => {
+                item.sumOfTithe = titheSum[item.date]
+              })
+              console.log(docs)
+              setTitheData(docs)
+              console.log('tithe data', titheData)
+              console.log('tithe sum', titheSum)
+              console.log('tithe sum 2023-02-08', titheSum['2023-02-08'])
+            })
+        }
+        fetchTitheData()
+      },[])
+
+      async function searchHandler(){
+        if (search) {
+          let titheSum:any = {}
+          const titheRef = collection(db, "tithe")
+          const titheRefQuery = query(titheRef, where('member', '==' , search))
+
+
+         const snapshots = await getDocs(titheRefQuery)
+            .then((snapshots) => {
+              const docs = snapshots.docs.map((doc) =>{
+                const data = doc.data()
+                data.id = doc.id
+
+                if (data.date in titheSum) {
+                  titheSum[data.date] = titheSum[data.date] + data.amount
+                }
+                else {
+                  titheSum[data.date] = data.amount
+                }
+                return data
+              })
+              docs.map(item => {
+                item.sumOfTithe = titheSum[item.date]
+              })
+              console.log(docs)
+              setTitheData(docs)
+            })
+        }
+      }
+
+      function deleteHandler(id:string) {
+        const docRef = doc(db, "tithe", id)
+        deleteDoc(docRef)
+        .then(() => {
+            console.log('deleted')
+            // setDeleteError('')
+            window.location.reload()
+          })
+          .catch((err) => {
+            console.log(err)
+            setDeleteError('Could not delete')
+          })
     }
 
     return (
@@ -70,12 +169,20 @@ export default function Tithe() {
 
       <div className='flex flex-row justify-between flex-wrap'> 
             <div className="rounded border-2 h-10">
-                <FontAwesomeIcon className='px-2' icon={faSearch}/>
-                <input className='h-full p-2' placeholder='Search Members' name='search' type='text'/>
+                <FontAwesomeIcon className='px-2' icon={faSearch} onClick={searchHandler}/>
+                <input className='h-full p-2' placeholder='Search Members' name='search' type='text' value={search}  onChange={e=>setSearch(e.target.value)}  />
             </div>
                 {/* <input className="p-2 rounded border-2 h-10" placeholder="Search" type='text'/> */}
                 <button className="text-white p-2 h-10 rounded w-40 bg-[#1A96FC]" onClick={() => setIsOpen(true)}>Add Tithe</button>
             </div>
+
+            {
+                      deleteError && 
+                      
+                      <div className={`text-center text-sm font-regular text-white bg-red-400 border p-1 rounded my-5`}>
+                      <span>Could not delete</span>
+                      </div>  
+                    }
       
             <table className='mt-10 table-auto border-separate border-spacing-[20px] text-[15px] w-[100%] flex-wrap text-sm'>
                 <thead className='text-[#B2B2B2]'>
@@ -87,22 +194,31 @@ export default function Tithe() {
                     <th></th>
                 </tr>
                 </thead>
-                <tbody> 
-                    <tr> 
-                        <td>7/01/2022</td>
-                        <td>Fifi Hayford</td>
-                        <td>300</td>
-                        <td>1500</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
+                {
+                  titheData ? 
+
+                  <tbody> 
+
+                    {
+                      titheData.map(data => (
+
+                        <tr key={data.id}> 
+                        <td>{data.date}</td>
+                        <td>{data.member}</td>
+                        <td>{data.amount}</td>
+                        <td>{data.sumOfTithe}</td>
+                        <td><FontAwesomeIcon icon={faTrash} color='red' onClick={() => deleteHandler(data.id)} /></td>
                     </tr>
-                    <tr> 
-                        <td>7/01/2022</td>
-                        <td>Theresah Mills</td>
-                        <td>300</td>
-                        <td>1500</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' /></td>
-                    </tr>
-                </tbody>
+                      ))
+                    }
+              </tbody>
+
+                  : 
+
+                  <div className='mt-5 text-[#B2B2B2]'>
+                <span>Loading tithe data...</span>       
+                </div>
+                }
             </table>
         </div>
     )

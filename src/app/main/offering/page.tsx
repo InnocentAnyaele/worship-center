@@ -113,7 +113,7 @@ export default function Offering() {
                       deleteError && 
                       
                       <div className={`text-center text-sm font-regular text-white bg-red-400 border p-1 rounded my-5`}>
-                      <span>Could not delete</span>
+                      <span>{deleteError}</span>
                       </div>  
                     }
             <table className='mt-10 table-auto border-separate border-spacing-[20px] text-[15px] w-[100%] flex-wrap text-sm'>
