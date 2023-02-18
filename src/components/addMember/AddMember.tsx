@@ -226,9 +226,9 @@ export default function AddMember (props:any) {
                         <label>Department</label>
                         <select className="border p-2 rounded w-[190px]" name='department' value={department} onChange={e=>setDepartment(e.target.value)} required>
                             <option value='Men Ministry'>Men Ministry</option>
-                            <option value='Women Ministry'>Chorister</option>
-                            <option value='Youth Ministry'>Children Minstry</option>
-                            <option value='Children Ministry'>Teacher</option>
+                            <option value='Women Ministry'>Women Ministry</option>
+                            <option value='Youth Ministry'>Youth Minstry</option>
+                            <option value='Children Ministry'>Children Ministry</option>
                         </select>
                     </div>
                 </div>
@@ -278,7 +278,7 @@ export default function AddMember (props:any) {
                     </div>
                     <div className="flex flex-col w-[190px]">
                         <label>Date of First Visit</label>
-                        <input className="border p-2 rounded" name="dateOfFirstVisit" type='date' value={dateOfFirstVisit} onChange={e=>setDateOfFirstVisit(e.target.value)}/>
+                        <input className="border p-2 rounded" name="dateOfFirstVisit" type='date' value={dateOfFirstVisit} onChange={e=>setDateOfFirstVisit(e.target.value)} required/>
                     </div>
                 </div>
 

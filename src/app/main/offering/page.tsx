@@ -33,7 +33,7 @@ export default function Offering() {
     useEffect(() => {
         const fetchOfferingData = async () => {
             const offeringRef = collection(db, "offering")
-            const offeringRefQuery = query(offeringRef, orderBy('dateAdded', 'desc'))
+            const offeringRefQuery = query(offeringRef, orderBy('date', 'desc'))
             const snapshots = await getDocs(offeringRefQuery)
             .then((snapshots) => {
               const docs = snapshots.docs.map((doc) =>{
