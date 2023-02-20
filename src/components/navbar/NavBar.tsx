@@ -28,6 +28,7 @@ export default function NavBar() {
 
     function logout(){
         signOut(auth)
+        localStorage.clear()
         router.push('/')
     }
 

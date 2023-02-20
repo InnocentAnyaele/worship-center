@@ -8,6 +8,7 @@ import AddContribution from "@/components/addContribution/AddContribution";
 import ViewContribution from "@/components/viewContribution/ViewContribution";
 
 import { Montserrat } from "@next/font/google"
+import ExportData from '@/components/exportData/ExportData'
 
 const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
 
@@ -57,6 +58,7 @@ export default function Project(){
     const [contributionData, setContributionData] = useState<any>(null)
     const [contributionAggData, setContributionAggData] = useState<any>(null)
 
+    let [exportData, setExportData] = useState<any>(null)
 
 
     const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -68,12 +70,14 @@ export default function Project(){
     useEffect(() => {
       const fetchContributionData = async () => {
           const monthSum:any = {}
+        let exportDataTmp = [["date", "amount"]]
           const contributionRef = collection(db, "contribution")
           const contributionRefQuery = query(contributionRef, orderBy('date', 'desc'))
           const snapshots = await getDocs(contributionRefQuery)
           .then((snapshots) => {
             const docs = snapshots.docs.map((doc) =>{
               const data = doc.data()
+              exportDataTmp.push([data.date, data.amount])
               data.id = doc.id
 
               let contributionDate = new Date(data.date)
@@ -101,6 +105,7 @@ export default function Project(){
               item.monthYear = itemFullDate
               item.totalMonthlyContribution = monthSum[itemFullDate]
             })
+            setExportData(exportDataTmp)
             setContributionData(docs)
             setContributionAggData(monthSum)
             console.log(contributionData)
@@ -207,7 +212,9 @@ export default function Project(){
                 <button className="bg-[#1A96FC] px-2 h-10 rounded w-40" onClick={() => setIsAddContributionOpen(true)}><span className="text-white text-sm">Add Contribution</span></button>
             </div>
 
-
+            {exportData && 
+              <ExportData data={exportData}/>
+                }
             <table className='mt-10 table-auto border-separate border-spacing-[20px] text-[15px] w-[100%] flex-wrap text-sm'>
                 <thead className='text-[#B2B2B2]'>
                 <tr className='text-left'>

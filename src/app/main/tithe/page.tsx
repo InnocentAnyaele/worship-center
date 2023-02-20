@@ -8,6 +8,8 @@ import AddTithe from "@/components/addTithe/AddTithe"
 
 import { Montserrat } from "@next/font/google"
 
+import ExportData from '@/components/exportData/ExportData'
+
 
 import { collection, deleteDoc, doc, getDocs, orderBy, query, where } from "firebase/firestore"
 import { db } from "@/lib/firebase"
@@ -27,6 +29,8 @@ export default function Tithe() {
         setIsOpen(true)   
     }
 
+    let [exportData, setExportData] = useState<any>(null)
+
     const [titheData, setTitheData] = useState<any>(null)
 
     const [deleteError, setDeleteError] = useState('')
@@ -43,6 +47,7 @@ export default function Tithe() {
   useEffect(() => {
         const fetchTitheData = async () => {
             let titheSum:any = {}
+        let exportDataTmp = [["Date", "Member", "Amount", "TotalAmount"]] 
             const titheRef = collection(db, "tithe")
             const titheRefQuery = query(titheRef, orderBy('dateAdded', 'desc'))
             const snapshots = await getDocs(titheRefQuery)
@@ -61,7 +66,9 @@ export default function Tithe() {
               })
               docs.map(item => {
                 item.sumOfTithe = titheSum[item.date]
+                exportDataTmp.push([item.date, item.member, item.amount,titheSum[item.date]])
               })
+              setExportData(exportDataTmp)
               console.log(docs)
               setTitheData(docs)
               console.log('tithe data', titheData)
@@ -177,7 +184,9 @@ export default function Tithe() {
                       <span>Could not delete</span>
                       </div>  
                     }
-      
+        {exportData && 
+              <ExportData data={exportData}/>
+                }
             <table className='mt-10 table-auto border-separate border-spacing-[20px] text-[15px] w-[100%] flex-wrap text-sm'>
                 <thead className='text-[#B2B2B2]'>
                 <tr className='text-left'>

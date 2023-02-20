@@ -163,7 +163,7 @@ export default function AddMember (props:any) {
                     </div>
                     <div className="flex flex-col">
                         <label>Address</label>
-                        <input className="border p-2 rounded" name="address" type='text' value={address} onChange={e=>setAddress(e.target.value)}/>
+                        <input className="border p-2 rounded" name="address" type='text' value={address} onChange={e=>setAddress(e.target.value)} required/>
                     </div>
                 </div>
 
@@ -177,7 +177,7 @@ export default function AddMember (props:any) {
                     </div>
                     <div className="flex flex-col w-[190px]">
                         <label>Date of Birth</label>
-                        <input className="border p-2 rounded" name="dateOfBirth" value={dateOfBirth}  type='date' onChange={e=>setDateOfBirth(e.target.value)}/>
+                        <input className="border p-2 rounded" name="dateOfBirth" value={dateOfBirth}  type='date' onChange={e=>setDateOfBirth(e.target.value)} required/>
                     </div>
                 </div>
 
@@ -195,7 +195,7 @@ export default function AddMember (props:any) {
                 <div className="flex flex-row justify-between my-5">
                     <div className="flex flex-col">
                         <label>Phone Number</label>
-                        <input className="border p-2 rounded" name="phone" type='text' value={phone} onChange={e=>setPhone(e.target.value)}/>
+                        <input className="border p-2 rounded" name="phone" type='text' value={phone} onChange={e=>setPhone(e.target.value)} required/>
                     </div>
                     <div className="flex flex-col">
                         <label>Hometown</label>
@@ -210,7 +210,7 @@ export default function AddMember (props:any) {
                     </div>
                     <div className="flex flex-col">
                         <label>Residence</label>
-                        <input className="border p-2 rounded" name="residence" type='text' value={residence} onChange={e=>setResidence(e.target.value)}/>
+                        <input className="border p-2 rounded" name="residence" type='text' value={residence} onChange={e=>setResidence(e.target.value)} required/>
                     </div>
                 </div>
 

@@ -9,6 +9,7 @@ import AddOffering from "@/components/addOffering/AddOffering"
 import { Montserrat } from "@next/font/google"
 import { collection, deleteDoc, doc, getDocs, orderBy, query } from "firebase/firestore"
 import { db } from "@/lib/firebase"
+import ExportData from "@/components/exportData/ExportData"
 
 const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
 
@@ -28,10 +29,14 @@ export default function Offering() {
     const [offeringData, setOfferingData] = useState<any>(null)
 
     const [deleteError, setDeleteError] = useState('')
+
+    let [exportData, setExportData] = useState<any>(null)
+
     
 
     useEffect(() => {
         const fetchOfferingData = async () => {
+        let exportDataTmp = [["Date", "Amount", "Members"]]
             const offeringRef = collection(db, "offering")
             const offeringRefQuery = query(offeringRef, orderBy('date', 'desc'))
             const snapshots = await getDocs(offeringRefQuery)
@@ -39,11 +44,14 @@ export default function Offering() {
               const docs = snapshots.docs.map((doc) =>{
                 const data = doc.data()
                 data.id = doc.id
+                exportDataTmp.push([data.date, data.amount, data.members])
                 return data
               })
               console.log(docs)
                 setOfferingData(docs)
               console.log('offering data', offeringData)
+          setExportData(exportDataTmp)
+
             })
         }
         fetchOfferingData()
@@ -116,6 +124,9 @@ export default function Offering() {
                       <span>{deleteError}</span>
                       </div>  
                     }
+                     {exportData && 
+                      <ExportData data={exportData}/>
+                }
             <table className='mt-10 table-auto border-separate border-spacing-[20px] text-[15px] w-[100%] flex-wrap text-sm'>
                 <thead className='text-[#B2B2B2]'>
                 <tr className='text-left'>

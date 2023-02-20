@@ -154,7 +154,7 @@ export default function Dashboard(){
 
     
     const row1content = [{'title': 'total members', 'figure' :memberCount ?  memberCount : 'loading'},{'title': `offetory ${currYear}`, 'figure' : offeringCount ? `GHS ${offeringCount}` : 'loading'},{'title': `project ${currYear}`, 'figure' : offeringCount ? `GHS ${offeringCount}` : 'loading'}, {'title': 'tithe', 'figure' : titheCount ? `GHS ${titheCount}` : 'loading'}]
-    const col1content = [{'title': 'Men Ministry', 'figure' : departmentCount ?  departmentCount['Men Ministry'] : 'loading'},{'title': 'Women Ministry', 'figure' : departmentCount ? departmentCount['Women Ministry'] : 'loading'},{'title': 'Youth Ministry', 'figure' : departmentCount ? departmentCount['Women Ministry'] : 'loading'}, {'title': 'Chidlren ministry', 'figure' : departmentCount ? departmentCount['Children Ministry'] : 'loading'}]
+    const col1content = [{'title': 'Men Ministry', 'figure' : departmentCount ?  departmentCount['Men Ministry'] : 'loading'},{'title': 'Women Ministry', 'figure' : departmentCount ? departmentCount['Women Ministry'] : 'loading'},{'title': 'Youth Ministry', 'figure' : departmentCount ? departmentCount['Youth Ministry'] : 'loading'}, {'title': 'Children ministry', 'figure' : departmentCount ? departmentCount['Children Ministry'] : 'loading'}]
     
     useEffect(() => {
         getMembers()

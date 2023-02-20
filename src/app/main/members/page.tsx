@@ -11,6 +11,8 @@ import ViewMember from '@/components/viewMember/ViewMember'
 import {getDocs, collection, query, orderBy, where, deleteDoc, doc} from 'firebase/firestore'
 import { db } from "@/lib/firebase"
 
+import ExportData from '@/components/exportData/ExportData'
+
 
 export interface viewDataInterface {
     'id': string,
@@ -89,6 +91,9 @@ export default function Members () {
     let [isViewMemberOpen, setIsViewMemberOpen] = useState(false)
     let [viewMemberData, setViewMemberData] = useState<viewDataInterface>(emptyMemberData)
 
+
+    let [exportData, setExportData] = useState<any>(null)
+
     const [memberData, setMemberData] = useState<any>(null)
     const [search, setSearch] = useState('')
 
@@ -97,6 +102,7 @@ export default function Members () {
 
     useEffect(() => {
       const fetchMemberData = async () => {
+        let exportDataTmp = [["Welfare No","Last Name", "First Name", "Department", "Sex", "Date of Birth", "Date of First Visit", "Phone", "Status", "Address", "Nationality", "Occupation", "Hometown", "Region", "Residence", "Marital Status", "Spouse Name", "Father's Name", "Mother's Name", "Children Name", "Next of Kin", "Next of Kin Phone", "Declaration", "Date of Baptism", "Membership", "Date of Transfer", "Officer in Charge", "Officer Signature Date", "Head Pastor Signature Date"]]
         const memberRef = collection(db, "members")
         const memberRefQuery = query(memberRef, orderBy('dateAdded', 'desc'))
         const snapshots = await getDocs(memberRefQuery)
@@ -104,10 +110,12 @@ export default function Members () {
           const docs = snapshots.docs.map((doc) =>{
             const data = doc.data()
             data.id = doc.id
+            exportDataTmp.push([data.welfare ,data.lastName, data.firstName, data.department, data.sex, data.dateOfBirth, data.dateOfFirstVisit, data.phone, data.status, data.address, data.nationality, data.occupation, data.hometown, data.region, data.residence, data.maritalStatus, data.spouseName, data.fatherName, data.motherName, data.childrenName, data.nextOfKin, data.nextOfKinPhone, data.declaration, data.dateOfBaptism, data.membership, data.dateOfTransfer, data.officerInCharge, data.officerSignatureDate, data.headPastorSignatureDate])
             return data
           } )
           console.log(docs)
           setMemberData(docs)
+          setExportData(exportDataTmp)
         })
       
       }
@@ -276,11 +284,17 @@ export default function Members () {
                 <input className='h-full p-2' placeholder='search by last name' name='search' value={search} onChange={e => setSearch(e.target.value)} type='text'/>
             </div>
                 {/* <input className="p-2 rounded border-2 h-10" placeholder="Search" type='text'/> */}
+                <div className='flex flex-col items-center'>
                 <button className="bg-[#1A96FC] px-2 h-10 rounded w-40" onClick={() => openAddMemberModal()}><span className="text-white text-sm">Add Member</span></button>
+                </div>
             </div>
+            {exportData && 
+              <ExportData data={exportData}/>
+                }
             <table className='mt-10 table-auto border-separate border-spacing-[20px] text-[15px] w-[100%] flex-wrap text-sm'>
                 <thead className='text-[#B2B2B2]'>
                 <tr className='text-left'>
+                    <th>Welfare No.</th>
                     <th>Last Name</th>
                     <th>Other Names</th>
                     <th>Department</th>
@@ -330,12 +344,13 @@ export default function Members () {
                         'headPastorSignatureDate': data.headPastorSignatureDate,
                         'status' : data.status,
                   })}>
+                      <td>{data.welfare}</td>
                       <td>{data.lastName}</td>
                       <td>{data.otherNames }</td>
                       <td>{data.department}</td>
                       <td>{data.sex}</td>
                       <td>{data.dateOfBirth}</td>
-                      <td>{data.dataOfFirstVisit}</td>
+                      <td>{data.dateOfFirstVisit}</td>
                       <td>{data.phone}</td>
                       <td className={`${data.status == 'Active' ?'text-green-600' : 'text-red-600' } font-bold`}>{data.status}</td>
                       </tr>

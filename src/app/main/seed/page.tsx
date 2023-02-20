@@ -9,6 +9,7 @@ import AddSeed from "@/components/addSeed/AddSeed"
 import { collection, deleteDoc, doc, getDocs, orderBy, query } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
+import ExportData from '@/components/exportData/ExportData'
 import { Montserrat } from "@next/font/google"
 
 const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
@@ -29,8 +30,12 @@ export default function Seed() {
     const [seedData, setSeedData] = useState<any>(null)
     const [deleteError, setDeleteError] = useState('')
 
+    let [exportData, setExportData] = useState<any>(null)
+
+
     useEffect(() => {
       const fetchOfferingData = async () => {
+        let exportDataTmp = [["Date", "Amount", "Members"]]
           const seedRef = collection(db, "seed")
           const seedRefQuery = query(seedRef, orderBy('dateAdded', 'desc'))
           const snapshots = await getDocs(seedRefQuery)
@@ -38,10 +43,12 @@ export default function Seed() {
             const docs = snapshots.docs.map((doc) =>{
               const data = doc.data()
               data.id = doc.id
+              exportDataTmp.push([data.date, data.amount, data.members])
               return data
             })
             console.log(docs)
               setSeedData(docs)
+              setExportData(exportDataTmp)
             console.log('offering data', seedData)
           })
       }
@@ -109,6 +116,9 @@ export default function Seed() {
 
       
             <button className="text-white p-2 h-10 rounded w-40 bg-[#1A96FC]" onClick={() => setIsOpen(true)}>Add Seed</button>
+            {exportData && 
+              <ExportData data={exportData}/>
+                }
             <table className='mt-10 table-auto border-separate border-spacing-[20px] text-[15px] w-[100%] flex-wrap text-sm'>
                 <thead className='text-[#B2B2B2]'>
                 <tr className='text-left'>

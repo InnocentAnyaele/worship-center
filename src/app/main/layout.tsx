@@ -19,7 +19,23 @@ export default function DashboardLayout({
     const {user} = useAuth()
     const router = useRouter()
 
-    if (!user) {
+    // if (!user) {
+    //   router.push('/')
+    // }
+    // else {
+    //   return (
+
+    //     <section className={`${montserrat.variable} font-sans`}>
+    //       {/* Include shared UI here e.g. a header or sidebar */}
+    //       <NavBar/>
+    //       {children}
+    //     </section>
+       
+    //   );
+    // }
+
+
+    if (localStorage.getItem('user') == null) {
       router.push('/')
     }
     else {
@@ -33,5 +49,15 @@ export default function DashboardLayout({
        
       );
     }
+
+    // return (
+
+    //   <section className={`${montserrat.variable} font-sans`}>
+    //     {/* Include shared UI here e.g. a header or sidebar */}
+    //     <NavBar/>
+    //     {children}
+    //   </section>
+     
+    // );
 
   }
