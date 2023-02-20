@@ -6,8 +6,6 @@ import { useState } from "react";
 import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 // import { useContext } from "react";
-
-import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
 
 const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
@@ -16,11 +14,12 @@ export default function Login() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
 
   const router = useRouter()
   
-  const {user} = useAuth()
-  console.log('logging context', user)
+  // const {user} = useAuth()
+  // console.log('logging context', user)
 
   function signIn() {
     signInWithEmailAndPassword(auth, email, password)
@@ -29,6 +28,7 @@ export default function Login() {
     })
     .catch((err) => {
       console.log(err)
+      setError('Wrong username or password')
     })
   }
 
@@ -54,12 +54,17 @@ export default function Login() {
 
       <form className="flex flex-col" onSubmit={submitHandler}>
         <span className="text-[#9FA2B4] my-2 text-sm">EMAIL</span>
-        <input placeholder="Email address" className="border-2 rounded-lg p-2 mb-2" value={email} onChange={e => setEmail(e.target.value)} required></input>
+        <input placeholder="Email address" className="border-2 rounded-lg p-2 mb-2" type='email' value={email} onChange={e => setEmail(e.target.value)} required></input>
         <div className="flex flex-row justify-between my-2">
           <span className="text-[#9FA2B4] text-sm">PASSWORD</span>
           {/* <span className="text-[#9FA2B4] text-sm">Forgot password?</span> */}
         </div>
-        <input placeholder="Password" className="border-2 rounded-lg p-2 mb-10" value={password} onChange={e => setPassword(e.target.value)} required/>
+        <input placeholder="Password" className="border-2 rounded-lg p-2 mb-10" value={password} type='password' onChange={e => setPassword(e.target.value)} required/>
+        {error &&
+        <div className={`text-center text-white bg-red-400 border p-2 rounded mb-2`}>
+        <span>{error}</span>
+    </div>
+        }
         <button className="bg-[#3751ff] rounded-lg h-[10%] p-3" type='submit'><span className="text-white">Log In</span></button>
       </form>
     </div>

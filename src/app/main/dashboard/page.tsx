@@ -1,20 +1,13 @@
 'use client'
 
-import NavBar from "@/components/navbar/NavBar";
-// import { Montserrat } from "@next/font/google";
-
 import Chart from "chart.js/auto";
 import { Line } from "react-chartjs-2";
-
 import {CategoryScale} from 'chart.js'; 
 Chart.register(CategoryScale);
 Chart.defaults.scale.grid.display = false;
-
 import {getDocs, collection, query, orderBy, where, deleteDoc, doc, getDoc} from 'firebase/firestore'
 import { db } from "@/lib/firebase"
 import { useEffect, useState } from "react";
-
-// const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
 
 
 
@@ -23,8 +16,6 @@ export default function Dashboard(){
 
     const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const [members, setMembers] = useState<any>(null)
-    // const members = [20,20,20,30,20,10,2,2,2,0,0,0];
-
     const data = {
         labels: labels,
         datasets: [
@@ -37,28 +28,21 @@ export default function Dashboard(){
           },
         ],
       };
-
-
       const [memberCount, setMemberCount] = useState<any>(null)
       const [departmentCount, setDepartmentCount] = useState<any>(null)
       const [offeringCount, setOfferingCount] = useState<any>(null)
       const [offeringDate, setOfferingDate] = useState<any>(null)
       const [titheCount, setTitheCount] = useState<any>(null)
       let growthYear = 2023
-      
     const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
 
-//   const currMonth = new Date('2000-07-07').getMonth()
-// starts indexing the month from 0
   const currMonth = new Date().getMonth()
   const currYear = new Date().getFullYear()
-  console.log('current month', currMonth)
-  
 
+  
     async function getMembers() {
-        // const monthSum:any = {}
         const monthSum:any = {
             'January' : 0,
             'February' : 0,
@@ -80,7 +64,6 @@ export default function Dashboard(){
             'Children Ministry': 0,
         }
         const memberRef = collection(db, 'members')
-        // const memberRefQuery = query(memberRef)
         const snapshots = await getDocs(memberRef)
         .then((snapshots) => {
             setMemberCount(snapshots.docs.length)
@@ -92,23 +75,11 @@ export default function Dashboard(){
                 let dateOfFirstVisit = new Date(data.dateOfFirstVisit)
                 let yearOfFistVisit = dateOfFirstVisit.getFullYear()
                 let monthOfFirstVisit = monthNames[dateOfFirstVisit.getMonth()]
-                // console.log(dateOfFirstVisit)
-                // console.log(yearOfFistVisit)
-                // console.log(monthOfFirstVisit)
                 if (yearOfFistVisit == growthYear) {
-                    // if (monthOfFirstVisit in monthSum){
-                    //     monthSum[monthOfFirstVisit] = monthSum[monthOfFirstVisit] + 1
-                    // }
-                    // else{
-                    //     monthSum[monthOfFirstVisit] = 1
-                    // }
                     monthSum[monthOfFirstVisit] = monthSum[monthOfFirstVisit] + 1 
                 }
             })
         })
-        console.log('monthsum', monthSum)
-        console.log('department count', dptCount)
-        console.log('filtered month sum',Object.values(monthSum).slice(0,currMonth+1))
         setMembers(Object.values(monthSum).slice(0,currMonth+1))
         setDepartmentCount(dptCount)
     }
@@ -121,26 +92,17 @@ export default function Dashboard(){
         const count = 0
         const snapshots = await getDocs(offeringRefQuery)
         .then((snapshots) => {
-            // setMemberCount(snapshots.docs.length)
             const offeringDocs = snapshots.docs.map((doc) => {
                 const data = doc.data()
                 let offeringDate = new Date(data.date)
                 let offeringYear = offeringDate.getFullYear()
-                console.log('offering date', offeringDate)
-                console.log('offering year', offeringYear)
 
                 if (offeringYear == currYear) {
                     offeringSum = offeringSum + data.amount
                 }
                 return data          
             })
-            console.log(offeringSum)
             setOfferingCount(offeringSum)
-        console.log(offeringDocs)
-        // setOfferingCount(offeringDocs[0].amount)
-        // setOfferingDate(offeringDocs[0].date)
-        console.log(offeringCount)
-        console.log(offeringDate)
         })
 
     }   
@@ -163,7 +125,7 @@ export default function Dashboard(){
                 }
 
             })
-            console.log('contribution sum for the year', contributionSumForTheYear)
+            // console.log('contribution sum for the year', contributionSumForTheYear)
         })
     }
 
@@ -179,14 +141,12 @@ export default function Dashboard(){
 
               let titheDate = new Date(data.date)
                 let titheYear = titheDate.getFullYear()
-                console.log('tithe year', titheYear)
                 
               if (titheYear == currYear) {
                 titheSum = titheSum + data.amount
               }
             })
 
-          console.log('tithe sum', titheSum)
           setTitheCount(titheSum)
           })
     }
@@ -195,14 +155,6 @@ export default function Dashboard(){
     
     const row1content = [{'title': 'total members', 'figure' :memberCount ?  memberCount : 'loading'},{'title': `offetory ${currYear}`, 'figure' : offeringCount ? `GHS ${offeringCount}` : 'loading'},{'title': `project ${currYear}`, 'figure' : offeringCount ? `GHS ${offeringCount}` : 'loading'}, {'title': 'tithe', 'figure' : titheCount ? `GHS ${titheCount}` : 'loading'}]
     const col1content = [{'title': 'Men Ministry', 'figure' : departmentCount ?  departmentCount['Men Ministry'] : 'loading'},{'title': 'Women Ministry', 'figure' : departmentCount ? departmentCount['Women Ministry'] : 'loading'},{'title': 'Youth Ministry', 'figure' : departmentCount ? departmentCount['Women Ministry'] : 'loading'}, {'title': 'Chidlren ministry', 'figure' : departmentCount ? departmentCount['Children Ministry'] : 'loading'}]
-
-
-      
-    // const row1content = [{'title': 'total members', 'figure' : 12},{'title': `offetory ${currYear}`, 'figure' : 12},{'title': `project ${currYear}`, 'figure' : 12}, {'title': 'tithe', 'figure' : 12}]
-    // const col1content = [{'title': 'Men Ministry', 'figure' : departmentCount ? departmentCount['Men Ministry'] : 'loading'},{'title': 'Women Ministry', 'figure' : 12},{'title': 'Youth Ministry', 'figure' : 12}, {'title': 'Chidlren ministry', 'figure' : 12}]
-
-    getOffering()
-
     
     useEffect(() => {
         getMembers()
@@ -214,8 +166,7 @@ export default function Dashboard(){
 
 
     return (
-
-        <main className={`font-sans h-screen w-screen flex flex-col px-40`}>
+<main className={`font-sans h-screen w-screen flex flex-col px-40`}>
             <div className="flex flex-row justify-between mt-10 flex-wrap">
             {row1content.map((content, index) => (
                     <div key={index} className='flex flex-col md:items-center lg:items-center md:mx-10 lg:mx-10 my-4 md:my-0 lg:my-0'>
