@@ -1,6 +1,8 @@
 import { useState } from "react"
-import {collection, addDoc, doc, setDoc} from 'firebase/firestore'
+import {collection, addDoc, doc, setDoc,} from 'firebase/firestore'
 import { db } from "@/lib/firebase"
+import { storage } from "@/lib/firebase"
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage"
 
 export default function AddMember (props:any) {
 
@@ -16,6 +18,7 @@ export default function AddMember (props:any) {
     console.log(edit)
 
 
+    const [profile, setProfile] = useState<any>(null)
     const [welfare, setWelfare] = useState(props.data.welfare)
     const [lastName, setLastName] = useState(props.data.lastName)
     const [otherNames, setOtherNames] = useState(props.data.otherNames)
@@ -52,7 +55,7 @@ export default function AddMember (props:any) {
 
     function submitHandler(e:any) {
         e.preventDefault()
-        let data = {
+        let data:any = {
             'welfare': welfare,
             'lastName': lastName,
             'otherNames': otherNames,
@@ -91,49 +94,131 @@ export default function AddMember (props:any) {
         const dbRef = collection(db, "members")
 
         if (!edit){
+
             try {
-                addDoc(dbRef, data)
-                .then(docRef => {
-                    console.log(docRef)
-                    console.log(docRef.id)
-                    setError('')
-                    setSuccess('Member added')
-                    window.location.reload()
+                console.log(profile)
+                const imageRef = ref(storage, `images/${welfare}-${lastName}-${otherNames}-${Date.now()}`)
+                uploadBytes(imageRef, profile)
+                .then((res) => {
+                    getDownloadURL(imageRef).then((url) => {
+                        const imageUrl:string = url
+                        try {
+                            data.imageUrl = imageUrl
+                            addDoc(dbRef, data)
+                            .then(docRef => {
+                                console.log(docRef)
+                                console.log(docRef.id)
+                                setError('')
+                                setSuccess('Member added')
+                                window.location.reload()
+                            })
+                            .catch((error) => {
+                                console.log(error)
+                                setSuccess('')
+                                setError('Something went wrong')
+                            })
+                        }
+                        catch(e) {
+                            console.log(e)
+                            setSuccess('')
+                            setError('Something went wrong')
+                        }
+                    })
                 })
-                .catch((error) => {
-                    console.log(error)
+                .catch((err) => {
+                    console.log(err)
                     setSuccess('')
-                    setError('Something went wrong')
+                    setError('Something went wrong')  
                 })
             }
-            catch(e) {
-                console.log(e)
+            catch(err) {
+                console.log(err)
                 setSuccess('')
-                setError('Something went wrong')
+                setError('Something went wrong')  
             }
         }
 
         if (edit){
             const docRef = doc(db, "members", props.data.id)
-            try {
-                setDoc(docRef, data)
-                .then((docRef) => {
-                    console.log('Document has been updated')
-                    setError('')
-                    setSuccess('Updated successful')
-                    window.location.reload()
-                })
-                .catch((err) => {
-                    console.log(err)
+            if (!profile){
+                console.log('You are updating the document without a profile')
+                try {
+                    setDoc(docRef, data)
+                    .then((docRef) => {
+                        console.log('Document has been updated')
+                        setError('')
+                        setSuccess('Updated successful')
+                        window.location.reload()
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                        setSuccess('')
+                        setError('Something went wrong')
+                    })
+                }
+                catch (e) {
+                    console.log(e)
                     setSuccess('')
                     setError('Something went wrong')
-                })
+                }
             }
-            catch (e) {
-                console.log(e)
-                setSuccess('')
-                setError('Something went wrong')
+            else {         
+                try {
+                    console.log('You are updating the document with a profile')
+                    console.log(profile)
+                    const imageRef = ref(storage, `images/${welfare}-${lastName}-${otherNames}-${Date.now()}`)
+                    uploadBytes(imageRef, profile)
+                    .then((res) => {
+                        getDownloadURL(imageRef).then((url) => {
+                            const imageUrl:string = url
+                            data.imageUrl = imageUrl
+
+                        try {
+                            setDoc(docRef, data)
+                            .then((docRef) => {
+                                console.log('Document has been updated')
+                                const oldImageRef = ref(storage, props.data.imageUrl)
+                                deleteObject(oldImageRef)
+                                .then((res) => {
+                                    console.log(res)
+                                    setError('')
+                                    setSuccess('Updated successful')
+                                    window.location.reload()
+                                })
+                                .catch((err) => {
+                                    setSuccess('')
+                                    setError('Something went wrong')
+                                })
+                            })
+                            .catch((err) => {
+                                console.log(err)
+                                setSuccess('')
+                                setError('Something went wrong')
+                            })
+                        }
+                        catch (e) {
+                            console.log(e)
+                            setSuccess('')
+                            setError('Something went wrong')
+                        }
+                        })
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                        setSuccess('')
+                        setError('Something went wrong')  
+                    })
+
+
+
+                }
+                catch(err) {
+                    console.log(err)
+                    setSuccess('')
+                    setError('Something went wrong')  
+                }
             }
+      
           
         }
        
@@ -145,6 +230,16 @@ export default function AddMember (props:any) {
     return (
         // <div className="w-[50%] rounded border p-5 h-[100vh] overflow-auto text-sm">
             <form className="flex flex-col flex-wrap mt-10" onSubmit={submitHandler}>
+                <div className="flex flex-col">
+                <label>Upload Profile Image</label>
+                {
+                    edit ? 
+                    <input className="border p-2 rounded" name="welfare"  onChange={e=>setProfile(e.target.files[0])} type='file' accept="image/*"/>
+:
+<input className="border p-2 rounded" name="welfare"  onChange={e=>setProfile(e.target.files[0])} type='file' accept="image/*" required/>                  
+
+                }
+                </div>
                 <div className="flex flex-row justify-between my-5">
                     <div className="flex flex-col">
                         <label>Welfare No.</label>

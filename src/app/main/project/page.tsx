@@ -232,6 +232,7 @@ export default function Project(){
 {
   Object.keys(contributionAggData).map((item, index) => (
     <tr key={index} 
+    className='hover:bg-gray-100 cursor-pointer'
     onClick={() => 
       
       {setViewContributionData({

@@ -37,6 +37,20 @@ export default function Tithe() {
 
     const [search, setSearch] = useState('')
 
+    let [deleteModal, setDeleteModal] = useState(false)
+    let [deleteID, setDeleteID] = useState('')
+
+    function openDeleteModal(id:string) {
+      setDeleteID(id)
+      setDeleteModal(true)
+    }
+
+    function closeDeleteModal() {
+      setDeleteID('')
+      setDeleteModal(false)
+    }
+    
+
 
     // const getTitheSum = async (id) => {
     //   const titheRef = collection(db, "tithe")
@@ -109,8 +123,8 @@ export default function Tithe() {
         }
       }
 
-      function deleteHandler(id:string) {
-        const docRef = doc(db, "tithe", id)
+      function deleteHandler() {
+        const docRef = doc(db, "tithe", deleteID)
         deleteDoc(docRef)
         .then(() => {
             console.log('deleted')
@@ -167,6 +181,49 @@ export default function Tithe() {
         </Dialog>
       </Transition>
 
+      <Transition appear show={deleteModal} as={Fragment}>
+        <Dialog as="div" className={`${montserrat.variable} font-sans relative z-10 text-sm`} onClose={closeDeleteModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="text-center transform w-auto overflow-hidden rounded-2xl bg-white p-6 align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg text-center font-bold leading-6 text-gray-900"
+                  >
+                    Are you sure you want to delete?
+                  </Dialog.Title>
+                  <div className="m-5 space-x-3">
+                  <button className="bg-[#c16161] px-6 py-2 rounded" onClick={deleteHandler}><span className="text-white text-sm">Yes</span></button>
+                  <button className="bg-[#789e56] px-6 py-2 rounded" onClick={closeDeleteModal}><span className="text-white text-sm">No</span></button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
 
       <div className='flex flex-row justify-between flex-wrap'> 
             <div className="rounded border-2 h-10">
@@ -210,7 +267,7 @@ export default function Tithe() {
                         <td>{data.member}</td>
                         <td>{data.amount}</td>
                         <td>{data.sumOfTithe}</td>
-                        <td><FontAwesomeIcon icon={faTrash} color='red' onClick={() => deleteHandler(data.id)} /></td>
+                        <td><FontAwesomeIcon icon={faTrash} color='red' onClick={()=>openDeleteModal(data.id)} /></td>
                     </tr>
                       ))
                     }

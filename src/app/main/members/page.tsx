@@ -6,16 +6,20 @@ import AddMember from '@/components/addMember/AddMember'
 import { Dialog, Transition } from '@headlessui/react'
 import { useState, Fragment, useEffect } from 'react'
 import ViewMember from '@/components/viewMember/ViewMember'
+import Image from "next/image"
+
 // import { viewDataInterface } from '@/lib/interfaces'
 
 import {getDocs, collection, query, orderBy, where, deleteDoc, doc} from 'firebase/firestore'
-import { db } from "@/lib/firebase"
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage"
+import { db, storage } from "@/lib/firebase"
 
 import ExportData from '@/components/exportData/ExportData'
 
 
 export interface viewDataInterface {
     'id': string,
+    'imageUrl': string,
     'welfare' : string;
     'lastName' : string;
     'otherNames' : string;
@@ -49,6 +53,7 @@ export interface viewDataInterface {
 
 
 import { Montserrat } from "@next/font/google"
+import Link from 'next/link'
 
 const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
 
@@ -56,6 +61,7 @@ export default function Members () {
 
     const emptyMemberData= {
         'id': '',
+        'imageUrl': '',
         'welfare' : '',
         'lastName' : '',
         'otherNames' : '',
@@ -139,16 +145,29 @@ export default function Members () {
     }
 
      function deleteHandler(){
-      const docRef = doc(db, "members", viewMemberData.id)
-      deleteDoc(docRef)
-      .then(() => {
-        console.log('deleted')
-        window.location.reload()
-      })
-      .catch((err) => {
+      try {
+        const docRef = doc(db, "members", viewMemberData.id)
+        const oldImageRef = ref(storage,viewMemberData.imageUrl)
+        deleteObject(oldImageRef)
+        .then(() => {
+          deleteDoc(docRef)
+          .then(() => {
+            console.log('deleted')
+            window.location.reload()
+          })
+          .catch((err) => {
+            console.log(err)
+            setDeleteError('Could not delete')
+          })
+        })
+        .catch((err)=> {
+          console.log(err)
+          setDeleteError('Could not delete')
+        })
+      }
+      catch(err) {
         console.log(err)
-        setDeleteError('Could not delete')
-      })
+      }
     }
 
   function closeAddMemberModal() {
@@ -291,9 +310,10 @@ export default function Members () {
             {exportData && 
               <ExportData data={exportData}/>
                 }
-            <table className='mt-10 table-auto border-separate border-spacing-[20px] text-[15px] w-[100%] flex-wrap text-sm'>
+            <table className='mt-10 table-auto border-separate border-spacing-y-[20px] text-[15px] w-[100%] flex-wrap text-sm'>
                 <thead className='text-[#B2B2B2]'>
                 <tr className='text-left'>
+                  <th>Profile</th>
                     <th>Welfare No.</th>
                     <th>Last Name</th>
                     <th>Other Names</th>
@@ -312,8 +332,9 @@ export default function Members () {
                   {
 
                     memberData.map(data => (
-                      <tr key={data.id}  onClick={() => openViewMemberModal({
+                      <tr className='hover:bg-gray-100 cursor-pointer' key={data.id}  onClick={() => openViewMemberModal({
                         'id' : data.id,
+                        'imageUrl': data.imageUrl,
                         'welfare' : data.welfare,
                         'lastName' : data.lastName,
                         'otherNames' : data.otherNames,
@@ -344,6 +365,11 @@ export default function Members () {
                         'headPastorSignatureDate': data.headPastorSignatureDate,
                         'status' : data.status,
                   })}>
+                    {/* <Link href={data.imageUrl}> */}
+                    <td>
+                <Image className="rounded-full h-10 w-10" src={data.imageUrl} alt='profile' width={10} height={10}/>
+                    </td>
+                    {/* </Link> */}
                       <td>{data.welfare}</td>
                       <td>{data.lastName}</td>
                       <td>{data.otherNames }</td>

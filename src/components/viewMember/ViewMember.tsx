@@ -1,8 +1,18 @@
+import Link from "next/link";
+import Image from "next/image"
+
+
 export default function ViewMember (props:any) {
 
     return (
         // <div className="w-[50%] rounded border p-5 h-[100vh] overflow-auto text-sm">
             <form className="flex flex-col flex-wrap mt-10 p-5">
+                <div className="flex flex-col my-5">
+                        <label className="font-bold">Profile</label>
+                        <Link href={props.data.imageUrl}>
+                        <Image className="rounded-full h-10 w-10" src={props.data.imageUrl} alt='logo' width={30} height={30}/>
+                            </Link>
+                    </div>
 
                 <div className="flex flex-row justify-between my-5">
                     <div className="flex flex-col">
