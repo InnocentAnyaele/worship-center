@@ -33,20 +33,21 @@ export default function DashboardLayout({
     //   );
     // }
 
-
-    if (localStorage.getItem('user') == null) {
-      router.push('/')
+    if (typeof window !== 'undefined') {
+      if (localStorage.getItem('user') == null) {
+        router.push('/')
+      }
+      else {
+        return (
+  
+          <section className={`${montserrat.variable} font-sans`}>
+            {/* Include shared UI here e.g. a header or sidebar */}
+            <NavBar/>
+            {children}
+          </section>
+         
+        );
     }
-    else {
-      return (
-
-        <section className={`${montserrat.variable} font-sans`}>
-          {/* Include shared UI here e.g. a header or sidebar */}
-          <NavBar/>
-          {children}
-        </section>
-       
-      );
     }
 
     // return (
