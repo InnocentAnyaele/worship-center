@@ -53,6 +53,11 @@ export default function AddMember (props:any) {
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
 
+
+    function setFiles(e:any){
+        setProfile(e.target.files[0])
+    }
+
     function submitHandler(e:any) {
         e.preventDefault()
         let data:any = {
@@ -234,9 +239,9 @@ export default function AddMember (props:any) {
                 <label>Upload Profile Image</label>
                 {
                     edit ? 
-                    <input className="border p-2 rounded" name="welfare"  onChange={e=>setProfile(e.target.files[0])} type='file' accept="image/*"/>
+                    <input className="border p-2 rounded" name="profile"  onChange={setFiles} type='file' accept="image/*"/>
 :
-<input className="border p-2 rounded" name="welfare"  onChange={e=>setProfile(e.target.files[0])} type='file' accept="image/*" required/>                  
+<input className="border p-2 rounded" name="profile"   onChange={setFiles} type='file' accept="image/*" required/>                  
 
                 }
                 </div>
