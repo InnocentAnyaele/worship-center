@@ -7,7 +7,6 @@ import { useAuth } from "@/lib/AuthContext";
 
 const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
 
-import PrivateRoute from "@/lib/PrivateRoute";
 import { useRouter } from "next/navigation";
 
 export default function DashboardLayout({
@@ -16,7 +15,7 @@ export default function DashboardLayout({
     children: React.ReactNode,
   }) {
 
-    const {user} = useAuth()
+    // {user} = useAuth()
     const router = useRouter()
 
     // if (!user) {
