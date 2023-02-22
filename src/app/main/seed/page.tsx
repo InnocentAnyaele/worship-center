@@ -84,7 +84,7 @@ export default function Seed() {
 
 
     return (
-        <div className="flex flex-col justify-center py-10 px-40 flex-wrap w-[100%]">
+        <div className="flex flex-col justify-center m-3 py-10 md:px-40 lg:px-40 flex-wrap w-[100%]">
 
 
 

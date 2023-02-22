@@ -197,7 +197,7 @@ export default function Members () {
 
     
     return (
-        <div className="flex flex-col justify-center py-10 px-40 flex-wrap w-[100%]">
+        <div className="flex flex-col justify-center py-10 md:px-40 lg:px-40 m-3 flex-wrap w-[100%]">
 
 
 {/* Add Member Modal */}
@@ -304,13 +304,13 @@ export default function Members () {
             </div>
                 {/* <input className="p-2 rounded border-2 h-10" placeholder="Search" type='text'/> */}
                 <div className='flex flex-col items-center'>
-                <button className="bg-[#1A96FC] px-2 h-10 rounded w-40" onClick={() => openAddMemberModal()}><span className="text-white text-sm">Add Member</span></button>
+                <button className="bg-[#1A96FC] px-2 h-10 rounded w-40  md:my-0 lg:my-0" onClick={() => openAddMemberModal()}><span className="text-white text-sm">Add Member</span></button>
                 </div>
             </div>
             {exportData && 
               <ExportData data={exportData}/>
                 }
-            <table className='mt-10 table-auto border-separate border-spacing-y-[20px] text-[15px] w-[100%] flex-wrap text-sm'>
+            <table className='mt-10 table-auto border-separate border-spacing-y-[20px] border-spacing-x-[20px] text-[15px] w-[100%] flex-wrap text-sm'>
                 <thead className='text-[#B2B2B2]'>
                 <tr className='text-left'>
                   <th>Profile</th>

@@ -119,7 +119,7 @@ export default function Project(){
 
 
     return (
-        <div className="flex flex-col justify-center py-10 px-40 flex-wrap w-[100%]">
+        <div className="flex m-3 flex-col justify-center py-10 md:px-40 lg:px-40 flex-wrap w-[100%]">
 
 <Transition appear show={isAddContributionOpen} as={Fragment}>
         <Dialog as="div" className={`${montserrat.variable} font-sans relative z-10 text-sm`} onClose={closeAddContributionModal}>
@@ -203,18 +203,20 @@ export default function Project(){
       </Transition>
 
 
-<div className='flex flex-row justify-between flex-wrap'> 
             {/* <div className="rounded border-2 h-10">
                 <FontAwesomeIcon className='px-2' icon={faSearch}/>
                 <input className='h-full p-2' placeholder='Search' name='search' type='text'/>
             </div> */}
                 {/* <input className="p-2 rounded border-2 h-10" placeholder="Search" type='text'/> */}
                 <button className="bg-[#1A96FC] px-2 h-10 rounded w-40" onClick={() => setIsAddContributionOpen(true)}><span className="text-white text-sm">Add Contribution</span></button>
-            </div>
 
             {exportData && 
+            <div>
               <ExportData data={exportData}/>
+              </div>
                 }
+
+
             <table className='mt-10 table-auto border-separate border-spacing-[20px] text-[15px] w-[100%] flex-wrap text-sm'>
                 <thead className='text-[#B2B2B2]'>
                 <tr className='text-left'>
