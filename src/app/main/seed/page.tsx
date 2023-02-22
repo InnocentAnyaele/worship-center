@@ -191,7 +191,7 @@ export default function Seed() {
                   <tbody> 
 
                     {
-                      seedData.map(data => (
+                      seedData.map((data:any) => (
                         <tr key={data.id}>
                           <td>{data.date}</td>
                           <td>{data.amount}</td>

@@ -331,7 +331,7 @@ export default function Members () {
                   <tbody> 
                   {
 
-                    memberData.map(data => (
+                    memberData.map((data:any) => (
                       <tr className='hover:bg-gray-100 cursor-pointer' key={data.id}  onClick={() => openViewMemberModal({
                         'id' : data.id,
                         'imageUrl': data.imageUrl,

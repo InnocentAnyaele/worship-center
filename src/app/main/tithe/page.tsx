@@ -260,7 +260,7 @@ export default function Tithe() {
                   <tbody> 
 
                     {
-                      titheData.map(data => (
+                      titheData.map((data:any) => (
 
                         <tr key={data.id}> 
                         <td>{data.date}</td>

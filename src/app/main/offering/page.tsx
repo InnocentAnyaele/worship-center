@@ -197,7 +197,7 @@ export default function Offering() {
                 <tbody> 
                     
                    {
-                    offeringData.map(data => (
+                    offeringData.map((data:any) => (
                         <tr key={data.id}>
                             <td>{data.date}</td>
                             <td>{data.amount}</td>
