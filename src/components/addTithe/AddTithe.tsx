@@ -76,7 +76,7 @@ export default function AddTithe() {
             <select className="border p-2 rounded" name="member" value={member} onChange={e => setMember(e.target.value)} required>
                 <option value='None'>None</option>
                 {
-                    memberDropdown.map(item => (
+                    memberDropdown.map((item:any) => (
                         <option key={item.id} value={item.lastName + ' ' + item.otherNames}>{item.lastName + ' ' + item.otherNames}</option>
                     ))
                 }
