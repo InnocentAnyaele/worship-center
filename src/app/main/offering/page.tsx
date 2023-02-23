@@ -172,7 +172,7 @@ export default function Offering() {
       </Transition>
 
       
-            <button className="text-white p-2 h-10 rounded w-40 bg-[#1A96FC]" onClick={() => setIsOpen(true)}>Add Offering</button>
+            <button className="text-white p-2 h-10 rounded w-40 bg-[#8B7E74]" onClick={() => setIsOpen(true)}>Add Offering</button>
             {
                       deleteError && 
                       

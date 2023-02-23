@@ -67,7 +67,7 @@ export default function AddContribution() {
                     <span>{error}</span>
                 </div>
                 }
-            <button className="text-white m-1 p-2 h-10 rounded w-40 bg-[#1A96FC]" type='submit'>Add Contribution</button>
+            <button className="text-white m-1 p-2 h-10 rounded w-40 bg-[#8B7E74]" type='submit'>Add Contribution</button>
         </form>
     )
 }

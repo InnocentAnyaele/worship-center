@@ -11,7 +11,7 @@ import Image from "next/image"
 // import { viewDataInterface } from '@/lib/interfaces'
 
 import {getDocs, collection, query, orderBy, where, deleteDoc, doc} from 'firebase/firestore'
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage"
+import { ref, uploadBytes, getDownloadURL, deleteObject} from "firebase/storage"
 import { db, storage } from "@/lib/firebase"
 
 import ExportData from '@/components/exportData/ExportData'
@@ -226,7 +226,7 @@ export default function Members () {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="transform w-[40%] overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="transform min-w-[40%] overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-bold leading-6 text-gray-900"
@@ -304,7 +304,7 @@ export default function Members () {
             </div>
                 {/* <input className="p-2 rounded border-2 h-10" placeholder="Search" type='text'/> */}
                 <div className='flex flex-col items-center'>
-                <button className="bg-[#1A96FC] px-2 h-10 rounded w-40  md:my-0 lg:my-0" onClick={() => openAddMemberModal()}><span className="text-white text-sm">Add Member</span></button>
+                <button className="bg-[#8B7E74] px-2 h-10 rounded w-40  md:my-0 lg:my-0" onClick={() => openAddMemberModal()}><span className="text-white text-sm">Add Member</span></button>
                 </div>
             </div>
             {exportData && 

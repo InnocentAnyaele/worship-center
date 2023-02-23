@@ -90,7 +90,7 @@ export default function AddTithe() {
                     <span>{error && error}</span>
                 </div>
                 }
-            <button className="text-white m-1 p-2 h-10 rounded w-40 bg-[#1A96FC]" type='submit'>Add Tithe</button>          
+            <button className="text-white m-1 p-2 h-10 rounded w-40 bg-[#8B7E74]" type='submit'>Add Tithe</button>          
             </>
             : 
 

@@ -231,7 +231,7 @@ export default function Tithe() {
                 <input className='h-full p-2' placeholder='Search Members' name='search' type='text' value={search}  onChange={e=>setSearch(e.target.value)}  />
             </div>
                 {/* <input className="p-2 rounded border-2 h-10" placeholder="Search" type='text'/> */}
-                <button className="text-white p-2 h-10 rounded md:my-0 lg:my-0 my-3 w-40 bg-[#1A96FC]" onClick={() => setIsOpen(true)}>Add Tithe</button>
+                <button className="text-white p-2 h-10 rounded md:my-0 lg:my-0 my-3 w-40 bg-[#8B7E74]" onClick={() => setIsOpen(true)}>Add Tithe</button>
             </div>
 
             {

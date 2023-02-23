@@ -153,7 +153,7 @@ export default function Dashboard(){
 
 
     
-    const row1content = [{'title': 'total members', 'figure' :memberCount ?  memberCount : 'loading'},{'title': `offetory ${currYear}`, 'figure' : offeringCount ? `GHS ${offeringCount}` : 'loading'},{'title': `project ${currYear}`, 'figure' : offeringCount ? `GHS ${offeringCount}` : 'loading'}, {'title': 'tithe', 'figure' : titheCount ? `GHS ${titheCount}` : 'loading'}]
+    const row1content = [{'title': 'total members', 'figure' :memberCount || memberCount == 0 ?  memberCount : 'loading'},{'title': `offetory ${currYear}`, 'figure' : offeringCount || offeringCount == 0 ? `GHS ${offeringCount}` : 'loading'},{'title': `project ${currYear}`, 'figure' : offeringCount || offeringCount == 0  ? `GHS ${offeringCount}` : 'loading'}, {'title': 'tithe', 'figure' : titheCount || titheCount == 0 ? `GHS ${titheCount}` : 'loading'}]
     const col1content = [{'title': 'Men Ministry', 'figure' : departmentCount ?  departmentCount['Men Ministry'] : 'loading'},{'title': 'Women Ministry', 'figure' : departmentCount ? departmentCount['Women Ministry'] : 'loading'},{'title': 'Youth Ministry', 'figure' : departmentCount ? departmentCount['Youth Ministry'] : 'loading'}, {'title': 'Children ministry', 'figure' : departmentCount ? departmentCount['Children Ministry'] : 'loading'}]
     
     useEffect(() => {
@@ -167,7 +167,7 @@ export default function Dashboard(){
 
     return (
 <main className={`font-sans h-screen w-screen flex flex-col px-40`}>
-            <div className="flex flex-row justify-between mt-10 flex-wrap">
+            <div className="flex flex-row justify-between flex-wrap">
             {row1content.map((content, index) => (
                     <div key={index} className='flex flex-col md:items-center lg:items-center md:mx-10 lg:mx-10 my-4 md:my-0 lg:my-0'>
                             <span className="font-bold text-lg my-4"> {content.figure} </span>

@@ -41,7 +41,7 @@ export default function NavBar() {
     }
 
     return (
-        <nav className={`flex flex-row px-6 w-[100%] lg:items-center flex-wrap`}>
+   <nav className={`flex flex-row px-6 w-[100%] lg:items-center flex-wrap bg-[#99DAFF] fixed top-0`}>
             <div className="flex flex-row items-center lg:mr-40 md:mr-40">
             <FontAwesomeIcon className="md:hidden lg:hidden" onClick={handleClick} icon={faBars}/>
             <Image className="m-4" src='/images/logo.png' alt='logo' width={30} height={30}/>
@@ -52,7 +52,7 @@ export default function NavBar() {
             {
                navItems.map((item,index) => (
                 <div key={index} className={`${pathname === item.path ? 'p3 bg-[#D9D9D9] rounded' : 'invinsible' }`}>
-                    <Link href={item.path} className='m-3'><span>{item.name}</span></Link>
+                    <Link href={item.path} className='m-3'><span className="text-black">{item.name}</span></Link>
                 </div>
                ))
             }
@@ -79,5 +79,6 @@ export default function NavBar() {
                 } */}
             </div>
         </nav>
+     
     )
 }

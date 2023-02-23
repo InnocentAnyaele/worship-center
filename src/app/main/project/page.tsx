@@ -208,7 +208,7 @@ export default function Project(){
                 <input className='h-full p-2' placeholder='Search' name='search' type='text'/>
             </div> */}
                 {/* <input className="p-2 rounded border-2 h-10" placeholder="Search" type='text'/> */}
-                <button className="bg-[#1A96FC] px-2 h-10 rounded w-40" onClick={() => setIsAddContributionOpen(true)}><span className="text-white text-sm">Add Contribution</span></button>
+                <button className="bg-[#8B7E74] px-2 h-10 rounded w-40" onClick={() => setIsAddContributionOpen(true)}><span className="text-white text-sm">Add Contribution</span></button>
 
             {exportData && 
             <div>

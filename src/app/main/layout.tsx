@@ -40,11 +40,13 @@ export default function DashboardLayout({
       else {
         return (
   
-          <section className={`${montserrat.variable} font-sans`}>
+          <div className={`${montserrat.variable} font-sans`}>
             {/* Include shared UI here e.g. a header or sidebar */}
             <NavBar/>
+            <div className="mt-20">
             {children}
-          </section>
+            </div>
+          </div>
          
         );
     }

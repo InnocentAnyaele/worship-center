@@ -234,7 +234,7 @@ export default function AddMember (props:any) {
 
     return (
         // <div className="w-[50%] rounded border p-5 h-[100vh] overflow-auto text-sm">
-            <form className="flex flex-col flex-wrap mt-10" onSubmit={submitHandler}>
+            <form className="flex flex-col flex-wrap mt-10 w-auto" onSubmit={submitHandler}>
                 <div className="flex flex-col">
                 <label>Upload Profile Image</label>
                 {
@@ -435,7 +435,7 @@ export default function AddMember (props:any) {
                     : null
                 }
                
-                <button className="p-2 rounded bg-[#1A96FC] text-white" type='submit'>Save</button>
+                <button className="p-2 rounded bg-[#8B7E74] text-white" type='submit'>Save</button>
 
             </form>
         // </div>
