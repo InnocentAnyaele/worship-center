@@ -41,6 +41,7 @@ export default function NavBar() {
     }
 
     return (
+//    <nav className={`flex flex-row px-6 w-[100%] lg:items-center flex-wrap fixed top-0`}>
    <nav className={`flex flex-row px-6 w-[100%] lg:items-center flex-wrap bg-[#99DAFF] fixed top-0`}>
             <div className="flex flex-row items-center lg:mr-40 md:mr-40">
             <FontAwesomeIcon className="md:hidden lg:hidden" onClick={handleClick} icon={faBars}/>

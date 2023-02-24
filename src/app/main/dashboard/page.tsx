@@ -80,6 +80,7 @@ export default function Dashboard(){
                 }
             })
         })
+        // setMembers([5,10,20,20, 30, 40, 50, 60, 50, 40 , 20, 20])
         setMembers(Object.values(monthSum).slice(0,currMonth+1))
         setDepartmentCount(dptCount)
     }
@@ -166,22 +167,25 @@ export default function Dashboard(){
 
 
     return (
-<main className={`font-sans h-screen w-screen flex flex-col px-40`}>
+<main className={`font-sans h-screen w-screen flex flex-col md:px-40 lg:px-40 `}>
             <div className="flex flex-row justify-between flex-wrap">
             {row1content.map((content, index) => (
-                    <div key={index} className='flex flex-col md:items-center lg:items-center md:mx-10 lg:mx-10 my-4 md:my-0 lg:my-0'>
-                            <span className="font-bold text-lg my-4"> {content.figure} </span>
-                            <span className="text-sm mt-4">{content.title} </span>
-                    </div>      
+                <div  key={index} className='p-3 bg-gradient-to-r from-[#6E45E2] to-[#88D3CE] rounded-lg text-white my-5 w-screen md:w-auto lg:w-auto m-10'>
+                    <div className='flex flex-col md:items-center lg:items-center md:mx-10 lg:mx-10 my-4 md:my-0 lg:my-0'>
+                                    <span className="font-bold text-lg my-4"> {content.figure} </span>
+                                    <span className="text-sm mt-4">{content.title} </span>
+                            </div>      
+                    </div>
+       
                 ))}
             </div>
-            <div className='flex flex-row justify-center md:mt-20 lg:mt-20 flex-wrap'>
-                <div className="flex flex-col w-[100vh] md:h-96 lg-h-96 bg-col">
+            <div className='flex flex-row justify-center md:mt-10 lg:mt-10 flex-wrap'>
+                <div className="flex flex-col w-[100vh] md:h-96 lg-h-96 bg-col m-10 md:m-0 lg:m-0">
                     {/* w-3/4 */}
                     <span className="font-bold mb-10">Membership growth</span>
                     <Line data={data} />
                 </div>
-                <div className='flex flex-col items-center self-end h-full pt-10 ml-auto'>
+                <div className='flex flex-col items-center self-end h-full pt-10 md:ml-auto lg:ml-auto'>
                 {col1content.map((content, index) => (
                     <div key={index} className='flex flex-col items-center'>
                             <span className="font-bold text-lg"> {content.figure} </span>
