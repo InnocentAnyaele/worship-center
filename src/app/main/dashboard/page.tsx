@@ -237,14 +237,11 @@ export default function Dashboard() {
   ];
 
   useEffect(() => {
+    getMembers();
     getOffering();
     getcontribution();
     getTithe();
-  }, []);
-
-  useEffect(() => {
-    getMembers();
-  }, [getMembers, growthYear]);
+  }, [growthYear]);
 
   return (
     <main
