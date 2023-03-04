@@ -151,7 +151,7 @@ export default function Dashboard() {
     });
   }
 
-  async function getcontribution() {
+  async function getContribution() {
     let contributionSumForTheYear: number = 0;
     const contributionRef = collection(db, "contribution");
     const snapshots = await getDocs(contributionRef).then((snapshots) => {
@@ -239,9 +239,11 @@ export default function Dashboard() {
   useEffect(() => {
     getMembers();
     getOffering();
-    getcontribution();
+    getContribution();
     getTithe();
   }, [growthYear]);
+
+  // useEffect(() => {}, []);
 
   return (
     <main

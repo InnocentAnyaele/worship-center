@@ -189,7 +189,7 @@ function Dashboard() {
             });
         });
     }
-    function getcontribution() {
+    function getContribution() {
         return __awaiter(this, void 0, void 0, function () {
             var contributionSumForTheYear, contributionRef, snapshots;
             return __generator(this, function (_a) {
@@ -289,9 +289,10 @@ function Dashboard() {
     react_1.useEffect(function () {
         getMembers();
         getOffering();
-        getcontribution();
+        getContribution();
         getTithe();
     }, [growthYear]);
+    // useEffect(() => {}, []);
     return (React.createElement("main", { className: "font-sans h-screen w-screen flex flex-col md:px-40 lg:px-40 " },
         React.createElement("div", { className: "flex flex-row justify-between flex-wrap" }, row1content.map(function (content, index) { return (React.createElement("div", { key: index, className: "p-3 bg-gradient-to-r from-[#6E45E2] to-[#88D3CE] rounded-lg text-white my-5 w-screen md:w-auto lg:w-auto m-10" },
             React.createElement("div", { className: "flex flex-col md:items-center lg:items-center md:mx-10 lg:mx-10 my-4 md:my-0 lg:my-0" },
