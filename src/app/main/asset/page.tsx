@@ -1,22 +1,11 @@
 "use client";
 
+import { faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import AddOffering from "@/components/addOffering/AddOffering";
+import { Fragment, useEffect, useState } from "react";
 
 import { Montserrat } from "@next/font/google";
-import {
-  collection,
-  addDoc,
-  deleteDoc,
-  doc,
-  getDocs,
-  orderBy,
-  query,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import ExportData from "@/components/exportData/ExportData";
 
 const montserrat = Montserrat({
@@ -24,26 +13,30 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
 });
 
-export default function Offering() {
-  let [isOpen, setIsOpen] = useState(false);
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  where,
+  addDoc,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import AddAsset from "@/components/addAsset/AddAsset";
 
-  function closeModal() {
-    setIsOpen(false);
-  }
-
-  function openModal() {
-    setIsOpen(true);
-  }
-
-  const [offeringData, setOfferingData] = useState<any>(null);
-
-  const [deleteError, setDeleteError] = useState("");
-
+export default function Asset() {
+  const [isAddAssetOpen, setIsAddAssetOpen] = useState(false);
+  const [isViewAssetOpen, setIsViewAssetOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [assetData, setAssetData] = useState<any>(null);
+  //   const [viewAssetData, setViewAssetData] = useState<any>("");
   let [exportData, setExportData] = useState<any>(null);
 
-  // Delete Modal
   let [deleteModal, setDeleteModal] = useState(false);
   let [deleteID, setDeleteID] = useState("");
+  const [deleteError, setDeleteError] = useState("");
 
   function openDeleteModal(id: string) {
     setDeleteID(id);
@@ -55,26 +48,21 @@ export default function Offering() {
     setDeleteModal(false);
   }
 
-  useEffect(() => {
-    const fetchOfferingData = async () => {
-      let exportDataTmp = [["Date", "Amount", "Members"]];
-      const offeringRef = collection(db, "offering");
-      const offeringRefQuery = query(offeringRef, orderBy("date", "desc"));
-      const snapshots = await getDocs(offeringRefQuery).then((snapshots) => {
-        const docs = snapshots.docs.map((doc) => {
-          const data = doc.data();
-          data.id = doc.id;
-          exportDataTmp.push([data.date, data.amount, data.members]);
-          return data;
-        });
-        console.log(docs);
-        setOfferingData(docs);
-        console.log("offering data", offeringData);
-        setExportData(exportDataTmp);
-      });
-    };
-    fetchOfferingData();
-  }, []);
+  function closeAddAssetModal() {
+    setIsAddAssetOpen(false);
+  }
+
+  function openAddAssetModal() {
+    setIsAddAssetOpen(true);
+  }
+
+  function closeViewAssetModal() {
+    setIsViewAssetOpen(false);
+  }
+
+  function openViewAssetModal() {
+    setIsViewAssetOpen(false);
+  }
 
   function uploadActivity() {
     try {
@@ -85,7 +73,7 @@ export default function Offering() {
       let currTime = date.toLocaleTimeString("en-US", options);
       let activity = "Delete";
       addDoc(activityRef, {
-        resource: "Offering",
+        resource: "Asset",
         activity: activity,
         owner: owner,
         date: new Date(),
@@ -103,7 +91,7 @@ export default function Offering() {
   }
 
   function deleteHandler() {
-    const docRef = doc(db, "offering", deleteID);
+    const docRef = doc(db, "asset", deleteID);
     deleteDoc(docRef)
       .then(() => {
         console.log("deleted");
@@ -117,13 +105,66 @@ export default function Offering() {
       });
   }
 
+  useEffect(() => {
+    const fetchAssetData = async () => {
+      let exportDataTmp = [
+        [
+          "Name",
+          "Type",
+          "Model",
+          "Serial Number",
+          "Tag Number",
+          "Location",
+          "Date purchased",
+        ],
+      ];
+      const assetRef = collection(db, "asset");
+      const assetRefQuery = query(assetRef, orderBy("purchaseDate", "desc"));
+      const snapshots = await getDocs(assetRefQuery).then((snapshots) => {
+        const docs = snapshots.docs.map((doc) => {
+          const data = doc.data();
+          exportDataTmp.push([
+            data.name,
+            data.type,
+            data.model,
+            data.serialNo,
+            data.tagNo,
+            data.location,
+            data.purchaseDate,
+          ]);
+          data.id = doc.id;
+          return data;
+        });
+        setAssetData(docs);
+        setExportData(exportDataTmp);
+      });
+    };
+    fetchAssetData();
+  }, []);
+
+  async function searchHandler() {
+    if (search) {
+      const memberRef = collection(db, "asset");
+      const memberRefQuery = query(memberRef, where("name", "==", search));
+      const snapshots = await getDocs(memberRefQuery);
+
+      const docs = snapshots.docs.map((doc) => {
+        const data = doc.data();
+        data.id = doc.id;
+        return data;
+      });
+      console.log(docs);
+      setAssetData(docs);
+    }
+  }
+
   return (
-    <div className="flex flex-col justify-center py-10 md:px-40 lg:px-40 m-3 flex-wrap w-[100%]">
-      <Transition appear show={isOpen} as={Fragment}>
+    <div className="flex m-3 flex-col justify-center py-10 md:px-40 lg:px-40 flex-wrap w-[100%]">
+      <Transition appear show={isAddAssetOpen} as={Fragment}>
         <Dialog
           as="div"
           className={`${montserrat.variable} font-sans relative z-10 text-sm`}
-          onClose={closeModal}
+          onClose={closeAddAssetModal}
         >
           <Transition.Child
             as={Fragment}
@@ -148,14 +189,14 @@ export default function Offering() {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="text-left transform w-auto overflow-hidden rounded-2xl bg-white p-6 align-middle shadow-xl transition-all">
+                <Dialog.Panel className="transform min-w-[30%] text-left overflow-hidden rounded-2xl bg-white p-6  align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
-                    className="text-lg text-center font-bold leading-6 text-gray-900"
+                    className="text-lg font-bold leading-6 text-gray-900"
                   >
-                    Add Offering
+                    Add Asset
                   </Dialog.Title>
-                  <AddOffering />
+                  <AddAsset />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -220,12 +261,35 @@ export default function Offering() {
         </Dialog>
       </Transition>
 
-      <button
-        className="text-white p-2 h-10 rounded w-40 bg-[#8B7E74]"
-        onClick={() => setIsOpen(true)}
-      >
-        Add Offering
-      </button>
+      <div className="flex flex-row justify-between flex-wrap">
+        <div className="rounded border-2 h-10">
+          <FontAwesomeIcon
+            className="px-2"
+            icon={faSearch}
+            onClick={searchHandler}
+          />
+          <input
+            className="h-full p-2"
+            placeholder="search by asset name"
+            name="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            type="text"
+          />
+        </div>
+        {/* <input className="p-2 rounded border-2 h-10" placeholder="Search" type='text'/> */}
+        <div className="flex flex-col items-center">
+          <button
+            className="bg-[#8B7E74] px-2 h-10 rounded w-40  md:my-0 lg:my-0"
+            onClick={() => openAddAssetModal()}
+          >
+            <span className="text-white text-sm">Add Asset</span>
+          </button>
+        </div>
+      </div>
+
+      {exportData && <ExportData data={exportData} />}
+
       {deleteError && (
         <div
           className={`text-center text-sm font-regular text-white bg-red-400 border p-1 rounded my-5`}
@@ -233,23 +297,33 @@ export default function Offering() {
           <span>{deleteError}</span>
         </div>
       )}
-      {exportData && <ExportData data={exportData} />}
-      <table className="mt-10 table-auto border-separate border-spacing-[20px] text-[15px] w-[100%] flex-wrap text-sm">
+      <table className="mt-10 border-separate table-auto border-spacing-y-[20px]  text-[15px] w-[100%] flex-wrap text-sm">
         <thead className="text-[#B2B2B2]">
           <tr className="text-left">
+            <th>No.</th>
+            <th>Asset Name</th>
+            <th>Asset Type</th>
+            <th>Model</th>
+            <th>Serial Number</th>
+            <th>Tag Number</th>
+            <th>Location</th>
             <th>Date</th>
-            <th>Amount</th>
-            <th>Members</th>
             <th></th>
           </tr>
         </thead>
-        {offeringData ? (
+
+        {assetData ? (
           <tbody>
-            {offeringData.map((data: any) => (
+            {assetData.map((data: any, index: any) => (
               <tr key={data.id}>
-                <td>{data.date}</td>
-                <td>{data.amount}</td>
-                <td>{data.members}</td>
+                <td>{index + 1}</td>
+                <td>{data.name}</td>
+                <td>{data.type}</td>
+                <td>{data.model}</td>
+                <td>{data.serialNo}</td>
+                <td>{data.tagNo}</td>
+                <td>{data.location}</td>
+                <td>{data.purchaseDate}</td>
                 <td>
                   <FontAwesomeIcon
                     icon={faTrash}
@@ -262,7 +336,7 @@ export default function Offering() {
           </tbody>
         ) : (
           <div className="mt-5 text-[#B2B2B2]">
-            <span>Loading offering data...</span>
+            <span>Loading asset data...</span>
           </div>
         )}
       </table>
