@@ -20,7 +20,7 @@ import { useEffect, useState } from "react";
 
 export default function Dashboard() {
   // let growthYear = 2023;
-  const [growthYear, setGrowthYear] = useState(
+  const [growthYear, setGrowthYear] = useState<any>(
     new Date().getFullYear().toString()
   );
 
@@ -244,7 +244,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     getMembers();
-  }, [growthYear]);
+  }, [getMembers, growthYear]);
 
   return (
     <main
