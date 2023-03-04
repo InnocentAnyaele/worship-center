@@ -30,6 +30,8 @@ export default function Asset() {
   const [isAddAssetOpen, setIsAddAssetOpen] = useState(false);
   const [isViewAssetOpen, setIsViewAssetOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [searchBy, setSearchBy] = useState("name");
+
   const [assetData, setAssetData] = useState<any>(null);
   //   const [viewAssetData, setViewAssetData] = useState<any>("");
   let [exportData, setExportData] = useState<any>(null);
@@ -144,9 +146,9 @@ export default function Asset() {
 
   async function searchHandler() {
     if (search) {
-      const memberRef = collection(db, "asset");
-      const memberRefQuery = query(memberRef, where("name", "==", search));
-      const snapshots = await getDocs(memberRefQuery);
+      const assetRef = collection(db, "asset");
+      const assetRefQuery = query(assetRef, where(searchBy, "==", search));
+      const snapshots = await getDocs(assetRefQuery);
 
       const docs = snapshots.docs.map((doc) => {
         const data = doc.data();
@@ -262,20 +264,36 @@ export default function Asset() {
       </Transition>
 
       <div className="flex flex-row justify-between flex-wrap">
-        <div className="rounded border-2 h-10">
-          <FontAwesomeIcon
-            className="px-2"
-            icon={faSearch}
-            onClick={searchHandler}
-          />
-          <input
-            className="h-full p-2"
-            placeholder="search by asset name"
-            name="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            type="text"
-          />
+        <div className="flex flex-row space-x-2">
+          <div className="rounded border-2 h-10">
+            <FontAwesomeIcon
+              className="px-2"
+              icon={faSearch}
+              onClick={searchHandler}
+            />
+            <input
+              className="h-full p-2"
+              placeholder={`Search by ${searchBy}`}
+              name="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              type="text"
+            />
+          </div>
+          <select
+            className="p-2 rounded w-[auto]"
+            name="selectYear"
+            value={searchBy}
+            onChange={(e) => setSearchBy(e.target.value)}
+          >
+            <option value="name">Search by Asset Name</option>
+            <option value="type">Search by Asset Type</option>
+            <option value="model">Search by Model</option>
+            <option value="serialNo">Search by Serial Number</option>
+            <option value="tagNo">Search by Tag Number</option>
+            <option value="location">Search by Location</option>
+            <option value="date">Search by Date</option>
+          </select>
         </div>
         {/* <input className="p-2 rounded border-2 h-10" placeholder="Search" type='text'/> */}
         <div className="flex flex-col items-center">

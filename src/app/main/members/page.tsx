@@ -111,6 +111,7 @@ export default function Members() {
   let [isViewMemberOpen, setIsViewMemberOpen] = useState(false);
   let [viewMemberData, setViewMemberData] =
     useState<viewDataInterface>(emptyMemberData);
+  const [searchBy, setSearchBy] = useState("lastName");
 
   let [exportData, setExportData] = useState<any>(null);
 
@@ -204,7 +205,7 @@ export default function Members() {
   async function searchHandler() {
     if (search) {
       const memberRef = collection(db, "members");
-      const memberRefQuery = query(memberRef, where("lastName", "==", search));
+      const memberRefQuery = query(memberRef, where(searchBy, "==", search));
       const snapshots = await getDocs(memberRefQuery);
 
       const docs = snapshots.docs.map((doc) => {
@@ -408,21 +409,40 @@ export default function Members() {
       </Transition>
 
       <div className="flex flex-row justify-between flex-wrap">
-        <div className="rounded border-2 h-10">
-          <FontAwesomeIcon
-            className="px-2"
-            icon={faSearch}
-            onClick={searchHandler}
-          />
-          <input
-            className="h-full p-2"
-            placeholder="search by last name"
-            name="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            type="text"
-          />
+        <div className="flex flex-row space-x-2">
+          <div className="rounded border-2 h-10">
+            <FontAwesomeIcon
+              className="px-2"
+              icon={faSearch}
+              onClick={searchHandler}
+            />
+            <input
+              className="h-full p-2"
+              placeholder={`Search by ${searchBy}`}
+              name="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              type="text"
+            />
+          </div>
+          <select
+            className="p-2 rounded w-[auto]"
+            name="selectYear"
+            value={searchBy}
+            onChange={(e) => setSearchBy(e.target.value)}
+          >
+            <option value="Welfare">Search by Welfare Number</option>
+            <option value="lastName">Search by Last Name</option>
+            <option value="otherNames">Search by Other Names</option>
+            <option value="department">Search by Department</option>
+            <option value="sex">Search by Sex</option>
+            <option value="dateOfBirth">Search by Date of Birth</option>
+            <option value="lastName">Search by Date of Birth</option>
+            <option value="phone">Search by Phone</option>
+            <option value="status">Search by Status</option>
+          </select>
         </div>
+
         {/* <input className="p-2 rounded border-2 h-10" placeholder="Search" type='text'/> */}
         <div className="flex flex-col items-center">
           <button

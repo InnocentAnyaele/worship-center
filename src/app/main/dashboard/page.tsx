@@ -20,7 +20,9 @@ import { useEffect, useState } from "react";
 
 export default function Dashboard() {
   // let growthYear = 2023;
-  const [growthYear, setGrowthYear] = useState(new Date().getFullYear());
+  const [growthYear, setGrowthYear] = useState(
+    new Date().getFullYear().toString()
+  );
 
   const labels = [
     "Jan",
@@ -103,7 +105,7 @@ export default function Dashboard() {
         dptCount[dpt] = dptCount[dpt] + 1;
 
         let dateOfFirstVisit = new Date(data.dateOfFirstVisit);
-        let yearOfFistVisit = dateOfFirstVisit.getFullYear();
+        let yearOfFistVisit = dateOfFirstVisit.getFullYear().toString();
         let monthOfFirstVisit = monthNames[dateOfFirstVisit.getMonth()];
         console.log("year of first visit", yearOfFistVisit);
         console.log("month of first visit", monthOfFirstVisit);
@@ -118,6 +120,16 @@ export default function Dashboard() {
     console.log(Object.values(monthSum).slice(0, currMonth + 1));
     setDepartmentCount(dptCount);
   }
+
+  function generateYears() {
+    let years = [];
+    for (let year = 2018; year <= 2030; year++) {
+      years.push(year);
+    }
+    return years;
+  }
+
+  let selectYear = generateYears();
 
   async function getOffering() {
     let offeringSum: number = 0;
@@ -225,11 +237,14 @@ export default function Dashboard() {
   ];
 
   useEffect(() => {
-    getMembers();
     getOffering();
     getcontribution();
     getTithe();
   }, []);
+
+  useEffect(() => {
+    getMembers();
+  }, [growthYear]);
 
   return (
     <main
@@ -252,6 +267,19 @@ export default function Dashboard() {
         <div className="flex flex-col w-[100vh] md:h-96 lg-h-96 bg-col m-10 md:m-0 lg:m-0">
           {/* w-3/4 */}
           <span className="font-bold mb-10">{`Membership growth for ${growthYear}`}</span>
+          {/* <label>Select year</label> */}
+          <select
+            className="border rounded w-[65px]"
+            name="selectYear"
+            value={growthYear}
+            onChange={(e) => setGrowthYear(e.target.value)}
+          >
+            {selectYear.map((yr, idx) => (
+              <option key={idx} value={yr}>
+                {yr}
+              </option>
+            ))}
+          </select>
           <Line data={data} />
         </div>
         <div className="flex flex-col items-center self-end h-full pt-10 md:ml-auto lg:ml-auto">
