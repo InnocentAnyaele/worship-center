@@ -26,7 +26,7 @@ export default function Login() {
   function signIn() {
     signInWithEmailAndPassword(auth, email, password)
       .then((response) => {
-        localStorage.setItem("user", JSON.stringify(response));
+        localStorage.setItem("user", JSON.stringify(response.user.uid));
         localStorage.setItem("userEmail", email);
         router.push("/main/dashboard");
       })
